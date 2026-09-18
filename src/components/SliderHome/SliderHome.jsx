@@ -1,9 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import api, { BASE_URL } from '../../api/api.js';
-// #region agent log
-fetch('http://127.0.0.1:7477/ingest/23e2ad8a-3088-4bff-a10e-8a95fcd860eb',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'475351'},body:JSON.stringify({sessionId:'475351',runId:'post-fix',hypothesisId:'A',location:'src/components/SliderHome/SliderHome.jsx:import',message:'SliderHome mounted context for API base',data:{baseURL:BASE_URL,href:typeof window!=='undefined'?window.location.href:null},timestamp:Date.now()})}).catch(()=>{});
-// #endregion
+import api from '../../api/api.js';
 import './SliderHome.css';
 
 const FALLBACK_SLIDES = [
