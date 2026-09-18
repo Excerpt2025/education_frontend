@@ -1,0 +1,484 @@
+/* ==========================================================================
+   Color tokens
+   - Orange  #f57c00  → primary action (submit button, active states)
+   - Blue    #0174cc  → secondary accent (links, icons, focus rings)
+   - Dark greyblue #1e293b → headings, primary text, high-contrast surfaces
+   Error red (#c0242c) kept for form validation — universal convention,
+   distinct enough from the accent pair to stay legible for colorblind users.
+   ========================================================================== */
+
+   .mmc-contact-page {
+    background: var(--mmc-white);
+    padding: 28px 0 80px;
+  }
+  
+  .mmc-contact-shell {
+    max-width: 1180px;
+  }
+  
+  .mmc-contact-head {
+    margin: 0 0 36px;
+    max-width: 38rem;
+  }
+  
+  .mmc-section-eyebrow {
+    margin: 0 0 10px;
+    color: var(--mmc-blue);
+    font-weight: 700;
+    font-size: 0.8rem;
+    letter-spacing: 0.06em;
+  }
+  
+  .mmc-contact-head h1 {
+    margin: 0 0 12px;
+    font-size: clamp(2rem, 4vw, 2.8rem);
+    line-height: 1.12;
+    letter-spacing: -0.04em;
+    color: var(--mmc-ink);
+  }
+  
+  .mmc-contact-head > p {
+    margin: 0;
+    max-width: 46ch;
+    color: var(--mmc-muted);
+    font-size: 1rem;
+    line-height: 1.6;
+  }
+  
+  .mmc-contact-split {
+    display: grid;
+    grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
+    gap: 36px;
+    align-items: stretch;
+  }
+  
+  .mmc-contact-visual {
+    position: relative;
+    min-height: 520px;
+    background: #ffffff;
+    overflow: hidden;
+  }
+
+  .mmc-contact-visual::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 2;
+    background:
+      radial-gradient(ellipse at 78% 18%, rgba(245, 124, 0, 0.1) 0%, transparent 42%),
+      radial-gradient(ellipse at 16% 86%, rgba(1, 116, 204, 0.1) 0%, transparent 50%);
+  }
+  
+  .mmc-spline-stage {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    background: #fff;
+  }
+  
+  .mmc-spline-stage iframe {
+    display: block;
+    position: absolute;
+    inset: 0 0 -56px 0;
+    width: 100% !important;
+    height: calc(100% + 56px) !important;
+    border: 0;
+    background: #fff;
+  }
+
+  /* Hide "Built with Spline" watermark */
+  .mmc-spline-badge-cover {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    z-index: 6;
+    width: 180px;
+    height: 56px;
+    pointer-events: none;
+    background: #fff;
+  }
+  
+  .mmc-spline-wait {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    margin: 0;
+    color: var(--mmc-blue-light);
+    font-size: 0.82rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    z-index: 1;
+  }
+  
+  .mmc-spline-stage.is-ready .mmc-spline-wait {
+    display: none;
+  }
+  
+  .mmc-contact-panel {
+    min-width: 0;
+    border: 1px solid var(--mmc-border);
+    background: #fff;
+    padding: 28px 26px 24px;
+  }
+  
+  .mmc-contact-form .mmc-form-group {
+    margin-bottom: 16px;
+    animation: mmc-contact-field 520ms var(--mmc-ease, cubic-bezier(0.22, 1, 0.36, 1)) both;
+  }
+  
+  .mmc-contact-form .mmc-form-group:nth-child(1) { animation-delay: 80ms; }
+  .mmc-contact-form .mmc-form-group:nth-child(2) { animation-delay: 130ms; }
+  .mmc-contact-form .mmc-form-group:nth-child(3) { animation-delay: 180ms; }
+  .mmc-contact-form .mmc-form-group:nth-child(4) { animation-delay: 230ms; }
+  
+  @keyframes mmc-contact-field {
+    from {
+      opacity: 0;
+      transform: translate3d(0, 10px, 0);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+  
+  .mmc-form-group label {
+    display: block;
+    margin-bottom: 7px;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--mmc-muted);
+    transition: color 220ms var(--mmc-ease, cubic-bezier(0.22, 1, 0.36, 1));
+  }
+  
+  .mmc-form-group:focus-within label {
+    color: var(--mmc-blue);
+  }
+  
+  .mmc-contact-form input,
+  .mmc-contact-form textarea {
+    width: 100%;
+    border: 1px solid var(--mmc-border);
+    background: #fff;
+    color: var(--mmc-ink);
+    font: inherit;
+    font-size: 0.94rem;
+    padding: 12px 14px;
+    resize: vertical;
+    transition:
+      border-color 220ms var(--mmc-ease, cubic-bezier(0.22, 1, 0.36, 1)),
+      box-shadow 220ms var(--mmc-ease, cubic-bezier(0.22, 1, 0.36, 1));
+  }
+  
+  .mmc-contact-form textarea {
+    min-height: 112px;
+  }
+  
+  .mmc-contact-form input:focus,
+  .mmc-contact-form textarea:focus {
+    outline: none;
+    border-color: var(--mmc-blue);
+    box-shadow: 0 0 0 3px rgba(1, 116, 204, 0.18);
+  }
+  
+  .mmc-form-group.has-error input,
+  .mmc-form-group.has-error textarea {
+    border-color: var(--mmc-error);
+  }
+  
+  .mmc-field-error {
+    margin: 6px 0 0;
+    color: var(--mmc-error);
+    font-size: 0.78rem;
+  }
+  
+  .mmc-error-msg,
+  .mmc-success-msg {
+    margin: 0 0 14px;
+    font-size: 0.88rem;
+    font-weight: 600;
+  }
+  
+  .mmc-error-msg { color: var(--mmc-error); }
+  .mmc-success-msg { color: var(--mmc-blue-dark); }
+  
+  .mmc-contact-submit {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    width: 100%;
+    min-height: 46px;
+    margin-top: 4px;
+    border: 0;
+    background: var(--mmc-orange);
+    color: #fff;
+    font-weight: 700;
+    font-size: 0.78rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    transition: background 200ms var(--mmc-ease, cubic-bezier(0.22, 1, 0.36, 1)),
+      transform 200ms var(--mmc-ease, cubic-bezier(0.22, 1, 0.36, 1));
+  }
+  
+  .mmc-contact-submit .mmc-outline-icon {
+    transition: transform 180ms var(--mmc-ease, cubic-bezier(0.22, 1, 0.36, 1));
+  }
+  
+  .mmc-contact-submit:hover:not(:disabled) {
+    background: var(--mmc-orange-dark);
+    transform: translateY(-1px);
+  }
+  
+  .mmc-contact-submit:hover:not(:disabled) .mmc-outline-icon {
+    transform: translateX(3px);
+  }
+  
+  .mmc-contact-submit:active:not(:disabled) {
+    transform: translateY(1px);
+  }
+  
+  .mmc-contact-submit:disabled {
+    opacity: 0.65;
+    cursor: wait;
+  }
+  
+  .mmc-contact-submit:focus-visible {
+    outline: 2px solid var(--mmc-blue);
+    outline-offset: 3px;
+  }
+  
+  .mmc-contact-reach {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px 22px;
+    margin: 28px 0 0;
+    padding: 22px 0 0;
+    border-top: 1px solid var(--mmc-border);
+  }
+  
+  .mmc-contact-reach li {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--mmc-muted);
+    font-size: 0.86rem;
+  }
+  
+  .mmc-contact-reach .mmc-outline-icon {
+    color: var(--mmc-blue);
+  }
+  
+  .mmc-contact-reach a {
+    color: var(--mmc-ink);
+    font-weight: 600;
+  }
+  
+  .mmc-contact-reach a:hover {
+    color: var(--mmc-blue);
+  }
+  
+  .mmc-icon-fallback {
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: currentColor;
+    opacity: 0.5;
+  }
+  
+  @media (max-width: 980px) {
+    .mmc-contact-split {
+      grid-template-columns: 1fr;
+      gap: 24px;
+    }
+  
+    .mmc-contact-visual {
+      min-height: 400px;
+      order: 0;
+    }
+
+    .mmc-spline-stage iframe {
+      inset: 0 0 -70px 0;
+      height: calc(100% + 70px) !important;
+      width: 120% !important;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+
+    .mmc-spline-badge-cover {
+      left: 0;
+      right: 0;
+      width: 100%;
+      height: 64px;
+      background: #fff;
+    }
+  
+    .mmc-contact-head {
+      margin-bottom: 24px;
+    }
+  }
+  
+  @media (max-width: 640px) {
+    .mmc-contact-page {
+      padding: 12px 0 56px;
+    }
+  
+    .mmc-contact-visual {
+      min-height: 570px;
+    }
+
+    .mmc-spline-stage iframe {
+      inset: 0 0 -80px 0;
+      height: calc(100% + 80px) !important;
+      width: 135% !important;
+      left: 50%;
+      transform: translateX(-50%) scale(0.92);
+      transform-origin: center center;
+    }
+
+    .mmc-spline-badge-cover {
+      left: 0;
+      right: 0;
+      width: 100%;
+      height: 72px;
+      background: #fff;
+    }
+  
+    .mmc-contact-panel {
+      padding: 22px 18px 18px;
+    }
+  }
+  
+  @media (prefers-reduced-motion: reduce) {
+    .mmc-contact-form .mmc-form-group,
+    .mmc-contact-submit,
+    .mmc-contact-submit .mmc-outline-icon,
+    .mmc-contact-form input,
+    .mmc-contact-form textarea {
+      animation: none;
+      transition: none;
+    }
+  
+    .mmc-contact-submit:hover:not(:disabled),
+    .mmc-contact-submit:hover:not(:disabled) .mmc-outline-icon {
+      transform: none;
+    }
+  }
+  
+  .mmc-spline-fallback {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    text-align: center;
+    padding: 32px;
+    background: var(--mmc-ink);
+  }
+  
+  .mmc-spline-fallback p {
+    margin: 0;
+    max-width: 30ch;
+    font-size: 0.9rem;
+    color: rgba(255,255,255,0.72);
+  }
+  
+  .mmc-spline-fallback .mmc-outline-icon {
+    color: var(--mmc-orange);
+  }
+  
+  .mmc-faq {
+    margin-top: 56px;
+    padding-top: 40px;
+    border-top: 1px solid var(--mmc-border);
+  }
+  
+  .mmc-faq-head {
+    margin: 0 0 24px;
+    max-width: 46ch;
+  }
+  
+  .mmc-faq-head h2 {
+    margin: 8px 0 0;
+    font-size: clamp(1.5rem, 3vw, 2rem);
+    line-height: 1.18;
+    letter-spacing: -0.03em;
+    color: var(--mmc-ink);
+  }
+  
+  .mmc-faq-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    border-top: 1px solid var(--mmc-border);
+  }
+  
+  .mmc-faq-item {
+    border-bottom: 1px solid var(--mmc-border);
+  }
+  
+  .mmc-faq-question {
+    margin: 0;
+  }
+  
+  .mmc-faq-trigger {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    width: 100%;
+    border: 0;
+    background: none;
+    padding: 18px 4px;
+    font: inherit;
+    font-size: 1rem;
+    font-weight: 600;
+    text-align: left;
+    color: var(--mmc-ink);
+    cursor: pointer;
+  }
+  
+  .mmc-faq-trigger:hover {
+    color: var(--mmc-blue);
+  }
+  
+  .mmc-faq-trigger:focus-visible {
+    outline: 2px solid var(--mmc-blue);
+    outline-offset: 3px;
+  }
+  
+  .mmc-faq-chevron {
+    display: inline-flex;
+    flex: none;
+    color: var(--mmc-orange);
+    transition: transform 220ms var(--mmc-ease, cubic-bezier(0.22, 1, 0.36, 1));
+  }
+  
+  .mmc-faq-item.is-open .mmc-faq-chevron {
+    transform: rotate(90deg);
+  }
+  
+  .mmc-faq-panel {
+    padding: 0 28px 20px 4px;
+  }
+  
+  .mmc-faq-panel p {
+    margin: 0;
+    max-width: 62ch;
+    color: var(--mmc-muted);
+    font-size: 0.94rem;
+    line-height: 1.65;
+  }
+  
+  @media (prefers-reduced-motion: reduce) {
+    .mmc-faq-chevron {
+      transition: none;
+    }
+  }

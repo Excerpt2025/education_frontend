@@ -1,0 +1,5 @@
+.mmc-zone-block { margin-bottom: 30px; }
+.mmc-zone-block h4 {
+  display: flex; align-items: center; gap: 10px;
+  margin-bottom: 12px;
+}

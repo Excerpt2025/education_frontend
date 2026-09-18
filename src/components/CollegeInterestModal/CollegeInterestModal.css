@@ -1,0 +1,21 @@
+.mmc-interest-modal-backdrop {
+  position: fixed; inset: 0;
+  background: rgba(15, 30, 45, 0.55);
+  display: flex; align-items: center; justify-content: center;
+  z-index: 500;
+  padding: 20px;
+  animation: mmc-backdrop-in var(--mmc-duration-micro) var(--mmc-ease) both;
+}
+.mmc-interest-modal {
+  background: #fff;
+  border-radius: 14px;
+  padding: 30px;
+  width: 100%;
+  max-width: 420px;
+  max-height: 88vh;
+  overflow-y: auto;
+  animation: mmc-modal-in var(--mmc-duration-enter) var(--mmc-ease) both;
+}
+.mmc-interest-modal h3 { margin: 0 0 8px; }
+.mmc-interest-sub { color: var(--mmc-muted); font-size: 0.88rem; margin: 0 0 20px; }
+.mmc-interest-modal-actions { display: flex; gap: 10px; justify-content: flex-end; margin-top: 18px; }

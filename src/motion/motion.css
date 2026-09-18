@@ -1,0 +1,404 @@
+/* ============================================================================
+   GLOBAL MOTION SYSTEM
+   One easing, one distance language, reused across the homepage.
+============================================================================ */
+:root {
+  --mmc-ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --mmc-duration-micro: 180ms;
+  --mmc-duration-hover: 220ms;
+  --mmc-duration-enter: 480ms;
+  --mmc-duration-section: 620ms;
+  --mmc-stagger: 60ms;
+  --mmc-distance: 16px;
+  --mmc-distance-sm: 10px;
+  --mmc-reveal-duration: var(--mmc-duration-enter);
+  --mmc-reveal-distance: var(--mmc-distance);
+  --mmc-reveal-delay: 0ms;
+}
+
+/* Viewport reveals — opacity + small translate / scale only */
+.mmc-reveal {
+  opacity: 0;
+  transform: translate3d(0, var(--mmc-reveal-distance), 0);
+  transition:
+    opacity var(--mmc-reveal-duration) var(--mmc-ease) var(--mmc-reveal-delay),
+    transform var(--mmc-reveal-duration) var(--mmc-ease) var(--mmc-reveal-delay);
+  will-change: opacity, transform;
+}
+
+.mmc-reveal--up {
+  transform: translate3d(0, var(--mmc-reveal-distance), 0);
+}
+
+.mmc-reveal--left {
+  transform: translate3d(calc(var(--mmc-reveal-distance) * -1), 0, 0);
+}
+
+.mmc-reveal--right {
+  transform: translate3d(var(--mmc-reveal-distance), 0, 0);
+}
+
+.mmc-reveal--scale {
+  transform: translate3d(0, 8px, 0) scale(1.04);
+}
+
+.mmc-reveal--strong {
+  --mmc-reveal-distance: 28px;
+  --mmc-reveal-duration: var(--mmc-duration-section);
+}
+
+.mmc-reveal.is-in {
+  opacity: 1;
+  transform: none;
+}
+
+.mmc-reveal.is-in.is-ready {
+  will-change: auto;
+  transition:
+    transform var(--mmc-duration-hover) var(--mmc-ease),
+    box-shadow var(--mmc-duration-hover) var(--mmc-ease),
+    border-color var(--mmc-duration-hover) var(--mmc-ease),
+    opacity var(--mmc-duration-hover) var(--mmc-ease);
+}
+
+@keyframes mmc-enter-up {
+  from {
+    opacity: 0;
+    transform: translate3d(0, var(--mmc-distance), 0);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes mmc-nav-in {
+  from {
+    opacity: 0;
+    transform: translate3d(0, -10px, 0);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes mmc-float {
+  0%, 100% { transform: translate3d(0, 0, 0); }
+  50% { transform: translate3d(0, -10px, 0); }
+}
+
+@keyframes mmc-kenburns {
+  from { transform: scale(1); }
+  to { transform: scale(1.045); }
+}
+
+@keyframes mmc-page-in {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 12px, 0);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes mmc-image-reveal {
+  from {
+    opacity: 0;
+    transform: scale(1.06);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes mmc-backdrop-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes mmc-modal-in {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 12px, 0) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.mmc-page-enter {
+  animation: mmc-page-in var(--mmc-duration-enter) var(--mmc-ease) both;
+}
+
+.mmc-image-reveal {
+  animation: mmc-image-reveal 700ms var(--mmc-ease) both;
+}
+
+.mmc-anim-enter {
+  animation: mmc-enter-up var(--mmc-duration-enter) var(--mmc-ease) both;
+}
+
+.mmc-float {
+  animation: mmc-float 6.5s var(--mmc-ease) infinite;
+}
+
+.mmc-kenburns {
+  animation: mmc-kenburns 18s var(--mmc-ease) alternate infinite;
+}
+
+.mmc-home,
+.mmc-hero {
+  --mmc-px: 0;
+  --mmc-py: 0;
+}
+
+.mmc-reveal--clip {
+  opacity: 1;
+  transform: none;
+  clip-path: inset(8% 0 8% 0);
+  transition: clip-path var(--mmc-reveal-duration) var(--mmc-ease) var(--mmc-reveal-delay);
+}
+
+.mmc-reveal--clip.is-in {
+  clip-path: inset(0 0 0 0);
+}
+
+.mmc-anim-text {
+  display: inline;
+}
+
+.mmc-anim-word {
+  display: inline-block;
+  margin-right: 0.28em;
+  opacity: 0;
+  filter: blur(5px);
+  transform: translate3d(0, 10px, 0);
+}
+
+.mmc-anim-text.is-in .mmc-anim-word {
+  animation: mmc-word-in 620ms var(--mmc-ease) both;
+  animation-delay: calc(var(--mmc-word-delay, 0ms) + (var(--mmc-word-i, 0) * 55ms));
+}
+
+.mmc-anim-word:last-child {
+  margin-right: 0;
+}
+
+.mmc-heading-italic {
+  font-style: italic;
+}
+
+.mmc-anim-word--mark {
+  font-style: italic;
+  padding: 0 0.14em;
+  background-image: linear-gradient(rgba(245, 124, 0, 0.38), rgba(245, 124, 0, 0.38));
+  background-repeat: no-repeat;
+  background-size: 100% 46%;
+  background-position: 0 88%;
+  box-decoration-break: clone;
+  -webkit-box-decoration-break: clone;
+}
+
+@keyframes mmc-word-in {
+  to {
+    opacity: 1;
+    filter: blur(0);
+    transform: none;
+  }
+}
+
+.mmc-cursor-pills {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 2;
+}
+
+.mmc-cursor-pill {
+  position: absolute;
+  display: inline-flex;
+  align-items: center;
+  padding: 6px 12px;
+  border: 1px solid var(--mmc-border);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.92);
+  color: var(--mmc-blue);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+  box-shadow: 0 8px 18px rgba(1, 116, 204, 0.08);
+  transform: translate3d(
+      calc(var(--mmc-px, 0) * var(--mmc-pill-x, 10px)),
+      calc(var(--mmc-py, 0) * var(--mmc-pill-y, 8px)),
+      0
+    )
+    rotate(calc(var(--mmc-px, 0) * 5deg));
+  animation: mmc-pill-float 7.5s ease-in-out infinite;
+  animation-delay: var(--mmc-pill-delay, 0s);
+}
+
+@keyframes mmc-pill-float {
+  0%, 100% { translate: 0 0; }
+  50% { translate: 0 -6px; }
+}
+
+.mmc-center-flow {
+  position: absolute;
+  inset: auto;
+  width: min(420px, 70%);
+  aspect-ratio: 1;
+  pointer-events: none;
+  opacity: 0;
+  transform: translate3d(
+      calc(var(--mmc-px, 0) * 10px),
+      calc(var(--mmc-py, 0) * 8px),
+      0
+    ) scale(0.88);
+  transition: opacity 700ms var(--mmc-ease), transform 900ms var(--mmc-ease);
+}
+
+.mmc-center-flow.is-on {
+  opacity: 0.55;
+  transform: translate3d(
+      calc(var(--mmc-px, 0) * 10px),
+      calc(var(--mmc-py, 0) * 8px),
+      0
+    ) scale(1);
+}
+
+.mmc-center-flow svg {
+  width: 100%;
+  height: 100%;
+}
+
+.mmc-flow-ring {
+  stroke: var(--mmc-blue-soft);
+  stroke-width: 1;
+  fill: none;
+}
+
+.mmc-flow-ring--2 { stroke: var(--mmc-border); }
+.mmc-flow-ring--3 { stroke: var(--mmc-blue-light); }
+
+.mmc-flow-dots circle {
+  fill: var(--mmc-orange);
+  opacity: 0.55;
+}
+
+.mmc-center-flow.is-on .mmc-flow-dots {
+  animation: mmc-flow-spin 28s linear infinite;
+  transform-origin: 200px 200px;
+  transform-box: fill-box;
+}
+
+@keyframes mmc-flow-spin {
+  to { transform: rotate(360deg); }
+}
+
+.mmc-parallax,
+.mmc-parallax-inner {
+  height: 100%;
+}
+
+.mmc-parallax-inner {
+  will-change: transform;
+}
+
+@media (max-width: 900px) {
+  .mmc-cursor-pills,
+  .mmc-center-flow {
+    display: none;
+  }
+}
+
+/* Shared interactive language */
+.mmc-link-underline {
+  position: relative;
+  transition: color var(--mmc-duration-hover) var(--mmc-ease);
+}
+
+.mmc-link-underline::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  height: 2px;
+  background: currentColor;
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform var(--mmc-duration-hover) var(--mmc-ease);
+}
+
+.mmc-link-underline:hover::after,
+.mmc-link-underline.is-active::after {
+  transform: scaleX(1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --mmc-duration-micro: 1ms;
+    --mmc-duration-hover: 1ms;
+    --mmc-duration-enter: 1ms;
+    --mmc-duration-section: 1ms;
+  }
+
+  html {
+    scroll-behavior: auto;
+  }
+
+  .mmc-reveal,
+  .mmc-reveal--up,
+  .mmc-reveal--left,
+  .mmc-reveal--right,
+  .mmc-reveal--scale,
+  .mmc-reveal--strong {
+    opacity: 1;
+    transform: none;
+    transition: none;
+    will-change: auto;
+  }
+
+  .mmc-anim-enter,
+  .mmc-page-enter,
+  .mmc-image-reveal,
+  .mmc-float,
+  .mmc-kenburns,
+  .mmc-navbar-inner,
+  .mmc-hero-copy > *,
+  .mmc-hero-img,
+  .mmc-hero-pills a,
+  .mmc-logo-track,
+  .mmc-interest-modal-backdrop,
+  .mmc-interest-modal,
+  .mmc-nav-backdrop,
+  .mmc-anim-word,
+  .mmc-cursor-pill,
+  .mmc-center-flow.is-on .mmc-flow-dots {
+    animation: none !important;
+  }
+
+  .mmc-anim-word,
+  .mmc-anim-text.is-in .mmc-anim-word,
+  .mmc-center-flow,
+  .mmc-center-flow.is-on,
+  .mmc-cursor-pill,
+  .mmc-reveal--clip,
+  .mmc-reveal--clip.is-in {
+    opacity: 1;
+    filter: none;
+    transform: none;
+    clip-path: none;
+  }
+
+  .mmc-cursor-pills,
+  .mmc-center-flow {
+    display: none;
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "short_name": "MapMyCareer360",
+  "name": "MapMyCareer360 - Education Consultant",
+  "icons": [{ "src": "images/logo.png", "sizes": "512x512", "type": "image/png" }],
+  "start_url": ".",
+  "display": "standalone",
+  "theme_color": "#0d6dad",
+  "background_color": "#ffffff"
+}

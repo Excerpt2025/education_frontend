@@ -1,0 +1,133 @@
+.mmc-spot-section {
+  position: relative;
+  padding: 64px 0;
+  background: linear-gradient(160deg, var(--mmc-blue-light) 0%, #fbfdff 42%, var(--mmc-orange-light) 100%);
+  overflow: hidden;
+}
+.mmc-spot-section::before {
+  content: '';
+  position: absolute;
+  top: -120px;
+  right: -100px;
+  width: 340px;
+  height: 340px;
+  border-radius: 50%;
+  background: radial-gradient(circle, var(--mmc-blue-glow) 0%, transparent 70%);
+  pointer-events: none;
+}
+.mmc-spot-section::after {
+  content: '';
+  position: absolute;
+  bottom: -140px;
+  left: -80px;
+  width: 300px;
+  height: 300px;
+  border-radius: 50%;
+  background: radial-gradient(circle, var(--mmc-orange-glow) 0%, transparent 70%);
+  pointer-events: none;
+}
+.mmc-spot-section .container { position: relative; z-index: 1; }
+
+.mmc-spot-head {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 20px;
+  margin-bottom: 30px;
+  flex-wrap: wrap;
+}
+.mmc-spot-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  font-family: var(--mmc-font-mono);
+  text-transform: uppercase;
+  font-size: 0.7rem;
+  letter-spacing: 0.08em;
+  font-weight: 700;
+  color: #fff;
+  background: var(--mmc-gradient-orange-blue);
+  padding: 5px 14px;
+  border-radius: 50px;
+  box-shadow: var(--mmc-shadow-blue);
+}
+.mmc-spot-head h2 {
+  margin: 12px 0 8px;
+  font-size: clamp(1.5rem, 2.8vw, 2.1rem);
+  color: var(--mmc-dark);
+}
+.mmc-spot-grad {
+  background: var(--mmc-gradient-orange-blue);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+.mmc-spot-head p { margin: 0; color: var(--mmc-muted); max-width: 520px; font-size: 0.92rem; line-height: 1.55; }
+.mmc-spot-cta { white-space: nowrap; }
+
+.mmc-spot-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 18px;
+}
+.mmc-spot-card {
+  background: #fff;
+  border: 1px solid var(--mmc-border);
+  border-top: 3px solid var(--mmc-blue);
+  border-radius: 16px;
+  overflow: hidden;
+  display: block;
+  box-shadow: var(--mmc-shadow);
+  transition: transform 200ms ease, box-shadow 200ms ease, border-color 200ms ease;
+}
+.mmc-spot-card:nth-child(3n+2) { border-top-color: var(--mmc-orange); }
+.mmc-spot-card:nth-child(3n+3) { border-top-color: var(--mmc-dark); }
+.mmc-spot-card:hover { transform: translateY(-5px); box-shadow: var(--mmc-shadow-lift); }
+.mmc-spot-photo { position: relative; height: 110px; background: var(--mmc-surface); }
+.mmc-spot-photo img { width: 100%; height: 100%; object-fit: cover; }
+.mmc-spot-rank {
+  position: absolute; top: 8px; left: 8px; background: var(--mmc-gradient-orange-blue); color: #fff;
+  font-size: 0.65rem; font-weight: 700; padding: 3px 9px; border-radius: 50px;
+}
+.mmc-spot-body { padding: 12px 14px; display: flex; flex-direction: column; gap: 4px; }
+.mmc-spot-body strong { font-size: 0.88rem; color: var(--mmc-dark); line-height: 1.3; }
+.mmc-spot-body small { display: flex; align-items: center; gap: 4px; font-size: 0.72rem; color: var(--mmc-muted); }
+.mmc-spot-meta { font-size: 0.72rem; color: var(--mmc-orange-dark); font-weight: 600; }
+
+.mmc-spot-footer { text-align: center; margin-top: 26px; }
+.mmc-spot-link {
+  display: inline-flex; align-items: center; gap: 6px;
+  color: var(--mmc-blue-dark); font-weight: 700; font-size: 0.88rem;
+}
+
+@media (max-width: 640px) {
+  .mmc-spot-head { flex-direction: column; align-items: flex-start; }
+}
+/* ===== APPEND THIS TO THE END OF CollegeSpotlight.css ===== */
+
+.mmc-spot-courses {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 8px 0 6px;
+}
+
+.mmc-spot-course-chip {
+  font-style: normal;
+  font-size: 11.5px;
+  line-height: 1;
+  padding: 5px 9px;
+  border-radius: 999px;
+  background: rgba(1, 116, 204, 0.08);
+  color: #0a5c9e;
+  border: 1px solid rgba(1, 116, 204, 0.16);
+  white-space: nowrap;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.mmc-spot-course-more {
+  background: rgba(245, 124, 0, 0.1);
+  color: #b45c00;
+  border-color: rgba(245, 124, 0, 0.2);
+}

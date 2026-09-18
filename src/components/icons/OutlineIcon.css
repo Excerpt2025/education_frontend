@@ -1,0 +1,21 @@
+.mmc-outline-icon {
+  display: block;
+  flex-shrink: 0;
+  stroke: currentColor;
+  stroke-width: 1.7;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  fill: none;
+}
+
+.mmc-outline-icon circle[r="0.8"],
+.mmc-outline-icon circle[r="1.2"] {
+  fill: currentColor;
+  stroke: none;
+}
+
+.mmc-icon-inline {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}

@@ -1,0 +1,75 @@
+.mmc-stats {
+  background: linear-gradient(90deg, rgba(1, 116, 204, 0.08) 0%, rgba(245, 124, 0, 0.1) 100%);
+  padding: 20px 0;
+  border-top: 1px solid var(--mmc-border);
+  border-bottom: 1px solid var(--mmc-border);
+}
+
+.mmc-logo-marquee {
+  overflow: hidden;
+  width: 100%;
+  -webkit-mask-image: linear-gradient(to right, transparent 0%, #000 10%, #000 90%, transparent 100%);
+  mask-image: linear-gradient(to right, transparent 0%, #000 10%, #000 90%, transparent 100%);
+}
+
+.mmc-logo-track {
+  display: flex;
+  align-items: center;
+  gap: 72px;
+  width: max-content;
+  padding: 8px 0;
+  animation: mmc-logo-marquee 36s linear infinite;
+}
+
+.mmc-logo-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--mmc-blue);
+  font-size: 1.35rem;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  white-space: nowrap;
+  user-select: none;
+}
+
+.mmc-logo-item:nth-child(even) {
+  color: var(--mmc-orange);
+}
+
+.mmc-logo-mark {
+  width: 28px;
+  height: 28px;
+  stroke: currentColor;
+  fill: none;
+  stroke-width: 1.7;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  flex-shrink: 0;
+}
+
+@keyframes mmc-logo-marquee {
+  from { transform: translate3d(0, 0, 0); }
+  to { transform: translate3d(-50%, 0, 0); }
+}
+
+@media (max-width: 640px) {
+  .mmc-logo-track { gap: 48px; }
+  .mmc-logo-item { font-size: 1.15rem; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mmc-logo-track {
+    animation: none;
+    justify-content: center;
+    flex-wrap: wrap;
+    width: 100%;
+    gap: 28px 40px;
+    padding: 8px 20px;
+  }
+
+  .mmc-logo-marquee {
+    -webkit-mask-image: none;
+    mask-image: none;
+  }
+}

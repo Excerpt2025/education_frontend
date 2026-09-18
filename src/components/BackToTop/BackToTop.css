@@ -1,0 +1,82 @@
+.mmc-back-top {
+  position: fixed;
+  right: 24px;
+  bottom: 96px;
+  z-index: 300;
+  width: 48px;
+  height: 48px;
+  display: grid;
+  place-items: center;
+  border: 1px solid var(--mmc-border);
+  background: #fff;
+  color: var(--mmc-blue);
+  opacity: 0;
+  pointer-events: none;
+  transform: translate3d(0, 8px, 0);
+  transition:
+    opacity 220ms var(--mmc-ease, cubic-bezier(0.22, 1, 0.36, 1)),
+    transform 220ms var(--mmc-ease, cubic-bezier(0.22, 1, 0.36, 1)),
+    border-color 220ms var(--mmc-ease, cubic-bezier(0.22, 1, 0.36, 1)),
+    color 220ms var(--mmc-ease, cubic-bezier(0.22, 1, 0.36, 1));
+}
+
+.mmc-back-top.is-visible {
+  opacity: 1;
+  pointer-events: auto;
+  transform: none;
+}
+
+.mmc-back-top:hover,
+.mmc-back-top:focus-visible {
+  border-color: var(--mmc-blue);
+  color: var(--mmc-blue);
+}
+
+.mmc-back-top:focus-visible {
+  outline: 2px solid var(--mmc-blue);
+  outline-offset: 3px;
+}
+
+.mmc-back-top .mmc-outline-icon {
+  transform: rotate(-90deg);
+}
+
+.mmc-back-top-ring {
+  position: absolute;
+  inset: 4px;
+  width: calc(100% - 8px);
+  height: calc(100% - 8px);
+  transform: rotate(-90deg);
+}
+
+.mmc-back-top-track,
+.mmc-back-top-fill {
+  fill: none;
+  stroke-width: 2.2;
+}
+
+.mmc-back-top-track {
+  stroke: var(--mmc-border);
+}
+
+.mmc-back-top-fill {
+  stroke: var(--mmc-orange);
+  stroke-linecap: round;
+  transition: stroke-dashoffset 80ms linear;
+}
+
+@media (max-width: 560px) {
+  .mmc-back-top {
+    right: 16px;
+    bottom: 80px;
+    width: 44px;
+    height: 44px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mmc-back-top,
+  .mmc-back-top-fill {
+    transition: none;
+  }
+}

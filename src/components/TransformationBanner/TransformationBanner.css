@@ -1,0 +1,130 @@
+.mmc-transform-slider {
+  position: relative;
+  min-width: 0;
+}
+
+.mmc-slide-toolbar {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+
+.mmc-slide-btn {
+  width: 40px;
+  height: 40px;
+  display: grid;
+  place-items: center;
+  border: 1px solid var(--mmc-border);
+  background: #fff;
+  color: var(--mmc-dark);
+}
+
+.mmc-slide-btn:first-child .mmc-outline-icon {
+  transform: rotate(180deg);
+}
+
+.mmc-slide-btn:hover {
+  border-color: var(--mmc-blue);
+  color: var(--mmc-blue);
+}
+
+.mmc-slide-viewport {
+  overflow: hidden;
+}
+
+.mmc-slide-track {
+  --mmc-slide-index: 0;
+  --mmc-slide-gap: 16px;
+  --mmc-slide-visible: 4;
+  display: flex;
+  width: 100%;
+  gap: var(--mmc-slide-gap);
+  transition: transform 420ms var(--mmc-ease, cubic-bezier(0.22, 1, 0.36, 1));
+  transform: translate3d(
+    calc(
+      var(--mmc-slide-index) * -1 *
+        (
+          (100% - (var(--mmc-slide-visible) - 1) * var(--mmc-slide-gap)) / var(--mmc-slide-visible) +
+            var(--mmc-slide-gap)
+        )
+    ),
+    0,
+    0
+  );
+}
+
+.mmc-slide-card {
+  flex: 0 0 calc((100% - (var(--mmc-slide-visible) - 1) * var(--mmc-slide-gap)) / var(--mmc-slide-visible));
+  min-width: 0;
+  border: 1px solid var(--mmc-border);
+  background: #fff;
+  padding: 0 0 16px;
+  color: inherit;
+}
+
+.mmc-slide-card img {
+  width: 100%;
+  height: 160px;
+  object-fit: cover;
+  background: var(--mmc-blue-light);
+}
+
+.mmc-slide-icon {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  margin: -16px 14px 10px;
+  background: #fff;
+  border: 1px solid var(--mmc-border);
+  color: var(--mmc-blue);
+  position: relative;
+}
+
+.mmc-slide-card strong {
+  display: block;
+  padding: 0 14px;
+  font-size: 0.92rem;
+  letter-spacing: -0.02em;
+}
+
+.mmc-slide-card small {
+  display: block;
+  padding: 6px 14px 0;
+  color: var(--mmc-muted);
+  font-size: 0.78rem;
+  line-height: 1.45;
+}
+
+@media (hover: hover) {
+  .mmc-slide-card:hover {
+    border-color: var(--mmc-blue);
+  }
+}
+
+@media (max-width: 980px) {
+  .mmc-slide-track {
+    --mmc-slide-visible: 2;
+  }
+
+  .mmc-slide-card img {
+    height: 180px;
+  }
+}
+
+@media (max-width: 640px) {
+  .mmc-slide-track {
+    --mmc-slide-visible: 1;
+  }
+
+  .mmc-slide-card img {
+    height: 200px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mmc-slide-track {
+    transition: none;
+  }
+}

@@ -1,0 +1,37 @@
+.mmc-auth-page {
+  min-height: calc(100vh - 300px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 20px;
+  background: #fff;
+}
+
+.mmc-auth-card {
+  width: 100%;
+  max-width: 420px;
+  padding: 40px 34px;
+  text-align: center;
+  border-radius: 24px;
+}
+
+.mmc-auth-logo { height: 56px; margin: 0 auto 16px; }
+.mmc-auth-card h2 { margin: 0 0 6px; }
+.mmc-auth-sub { color: var(--mmc-muted); font-size: 0.88rem; margin-bottom: 26px; }
+
+.mmc-auth-submit { width: 100%; margin-top: 6px; }
+
+.mmc-auth-links {
+  margin-top: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  font-size: 0.88rem;
+}
+.mmc-auth-links a { color: var(--mmc-blue); font-weight: 600; }
+
+@media (max-width: 480px) {
+  .mmc-auth-page { padding: 30px 14px; }
+  .mmc-auth-card { padding: 26px 18px; }
+  .mmc-auth-logo { height: 46px; }
+}

@@ -1,0 +1,104 @@
+.mmc-footer {
+  background: linear-gradient(135deg, var(--mmc-dark) 0%, #015a9e 55%, #0a3d6b 100%);
+  color: rgba(255,255,255,0.72);
+  padding: 16px 0 0;
+  margin-top: 24px;
+  box-shadow: inset 0 3px 0 0 var(--mmc-orange);
+}
+
+.mmc-footer-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding-bottom: 12px;
+}
+
+.mmc-footer-brand {
+  display: inline-flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.mmc-footer-logo {
+  height: 32px;
+  width: auto;
+  background: transparent;
+  opacity: 0;
+  transition: opacity 0.25s ease;
+}
+.mmc-footer-logo.is-loaded { opacity: 1; }
+
+.mmc-footer-links {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px 18px;
+  font-size: 0.82rem;
+  font-weight: 600;
+}
+
+.mmc-footer-links a {
+  color: rgba(255,255,255,0.72);
+  transition: color var(--mmc-duration-hover) var(--mmc-ease);
+}
+.mmc-footer-links a:hover { color: var(--mmc-orange); }
+
+.mmc-footer-meta {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex-shrink: 0;
+  font-size: 0.8rem;
+}
+
+.mmc-footer-meta > a {
+  color: rgba(255,255,255,0.72);
+  white-space: nowrap;
+}
+.mmc-footer-meta > a:hover { color: var(--mmc-orange); }
+
+.mmc-footer-social { display: flex; gap: 6px; }
+.mmc-footer-social a {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.08);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  transition: background var(--mmc-duration-hover) var(--mmc-ease);
+}
+.mmc-footer-social a:hover { background: var(--mmc-orange); }
+
+.mmc-footer-bottom {
+  border-top: 1px solid rgba(255,255,255,0.1);
+  padding: 8px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 0.72rem;
+  max-width: 1180px;
+  margin: 0 auto;
+}
+
+.mmc-footer-bottom p {
+  margin: 0;
+  color: var(--mmc-muted);
+}
+
+.mmc-admin-link {
+  color: var(--mmc-muted);
+  transition: color var(--mmc-duration-hover) var(--mmc-ease);
+}
+.mmc-admin-link:hover { color: var(--mmc-orange); }
+
+@media (max-width: 800px) {
+  .mmc-footer-row {
+    flex-direction: column;
+    text-align: center;
+    gap: 12px;
+    padding-bottom: 10px;
+  }
+}

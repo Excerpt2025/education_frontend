@@ -1,0 +1,169 @@
+.mmc-admin-shell {
+  display: flex;
+  min-height: 100vh;
+  background: var(--mmc-bg);
+}
+
+.mmc-admin-sidebar {
+  width: 260px;
+  flex-shrink: 0;
+  background: var(--mmc-navy);
+  color: rgba(255,255,255,0.72);
+  overflow-y: auto;
+  height: 100vh;
+  position: sticky;
+  top: 0;
+}
+.mmc-admin-brand {
+  padding: 22px 20px;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.mmc-admin-brand img { height: 42px; background: #fff; padding: 5px 10px; border-radius: 8px; }
+
+/* Close button only ever shows in the mobile off-canvas nav */
+.mmc-admin-sidebar-close {
+  display: none;
+  background: transparent;
+  border: none;
+  color: rgba(255,255,255,0.72);
+  font-size: 1.2rem;
+  line-height: 1;
+  padding: 6px;
+  cursor: pointer;
+}
+
+.mmc-admin-nav { padding: 16px 12px 40px; }
+.mmc-admin-nav-group { margin-bottom: 18px; }
+.mmc-admin-nav-group p {
+  text-transform: uppercase;
+  font-size: 0.68rem;
+  letter-spacing: 0.08em;
+  color: var(--mmc-muted);
+  padding: 0 10px;
+  margin: 0 0 6px;
+}
+.mmc-admin-nav-group a {
+  display: block;
+  padding: 10px 12px;
+  border-radius: 8px;
+  font-size: 0.88rem;
+  color: rgba(255,255,255,0.72);
+  margin-bottom: 2px;
+}
+.mmc-admin-nav-group a:hover { background: rgba(255,255,255,0.06); }
+.mmc-admin-nav-group a.active { background: var(--mmc-blue); color: #fff; font-weight: 600; }
+
+.mmc-admin-main {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.mmc-admin-topbar {
+  height: 68px;
+  flex-shrink: 0;
+  background: #fff;
+  border-bottom: 1px solid var(--mmc-border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 0 28px;
+  font-weight: 600;
+  color: var(--mmc-navy);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.mmc-admin-topbar-left {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  min-width: 0;
+}
+
+.mmc-admin-welcome {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Hamburger button — hidden on desktop, shown at the mobile breakpoint below */
+.mmc-admin-menu-btn {
+  display: none;
+  flex-direction: column;
+  justify-content: center;
+  gap: 4px;
+  width: 36px;
+  height: 36px;
+  border: 1px solid var(--mmc-border);
+  border-radius: 8px;
+  background: #fff;
+  padding: 0;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+.mmc-admin-menu-btn span {
+  display: block;
+  height: 2px;
+  margin: 0 7px;
+  background: var(--mmc-navy);
+  border-radius: 2px;
+}
+
+.mmc-admin-backdrop {
+  display: none;
+}
+
+.mmc-admin-content {
+  padding: 28px;
+  max-width: 1280px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+@media (max-width: 900px) {
+  .mmc-admin-menu-btn { display: flex; }
+
+  .mmc-admin-sidebar-close { display: block; }
+
+  /* Off-canvas sidebar: fixed, slid off-screen until opened */
+  .mmc-admin-sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    width: 82%;
+    max-width: 300px;
+    transform: translateX(-100%);
+    transition: transform 0.25s ease;
+    z-index: 200;
+    box-shadow: 2px 0 18px rgba(0,0,0,0.25);
+  }
+  .mmc-admin-sidebar.is-open {
+    transform: translateX(0);
+  }
+
+  .mmc-admin-backdrop {
+    display: block;
+    position: fixed;
+    inset: 0;
+    background: rgba(15, 30, 45, 0.5);
+    z-index: 150;
+  }
+
+  .mmc-admin-topbar { padding: 0 16px; }
+  .mmc-admin-welcome { max-width: 40vw; }
+  .mmc-admin-content { padding: 18px 16px; }
+}
+
+@media (max-width: 480px) {
+  .mmc-admin-topbar { height: 60px; }
+  .mmc-admin-welcome { display: none; }
+  .mmc-admin-content { padding: 14px 12px; }
+}

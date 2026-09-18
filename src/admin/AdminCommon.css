@@ -1,0 +1,162 @@
+.mmc-admin-page-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 14px;
+  margin-bottom: 22px;
+}
+.mmc-admin-page-header h1 { margin: 0; font-size: 1.5rem; color: var(--mmc-navy); }
+.mmc-admin-page-header p { margin: 4px 0 0; color: var(--mmc-muted); font-size: 0.88rem; }
+
+.mmc-admin-toolbar {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 18px;
+}
+.mmc-admin-toolbar input,
+.mmc-admin-toolbar select {
+  padding: 10px 14px;
+  border-radius: 8px;
+  border: 1.5px solid var(--mmc-border);
+  font-size: 0.88rem;
+}
+
+.mmc-admin-card { padding: 20px; margin-bottom: 20px; }
+
+.mmc-admin-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 18px;
+  margin-bottom: 30px;
+}
+.mmc-admin-stat {
+  padding: 20px;
+}
+.mmc-admin-stat span { display: block; color: var(--mmc-muted); font-size: 0.78rem; margin-bottom: 8px; }
+.mmc-admin-stat strong { font-size: 1.6rem; color: var(--mmc-orange); }
+
+.mmc-admin-pagination {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 16px;
+  font-size: 0.85rem;
+  color: var(--mmc-muted);
+}
+.mmc-admin-pagination button {
+  padding: 6px 14px;
+  border-radius: 8px;
+  border: 1px solid var(--mmc-border);
+  background: #fff;
+}
+.mmc-admin-pagination button:disabled { opacity: 0.4; cursor: not-allowed; }
+
+.mmc-admin-actions { display: flex; gap: 8px; }
+.mmc-admin-actions button {
+  padding: 6px 12px;
+  border-radius: 6px;
+  border: none;
+  font-size: 0.78rem;
+  font-weight: 600;
+}
+.mmc-admin-btn-edit { background: var(--mmc-blue-light); color: var(--mmc-blue); }
+.mmc-admin-btn-delete { background: var(--mmc-danger-bg); color: var(--mmc-danger); }
+
+.mmc-admin-modal-backdrop {
+  position: fixed; inset: 0;
+  background: rgba(30, 41, 59, 0.5);
+  display: flex; align-items: center; justify-content: center;
+  z-index: 500;
+  padding: 20px;
+}
+.mmc-admin-modal {
+  background: #fff;
+  border-radius: 14px;
+  padding: 28px;
+  width: 100%;
+  max-width: 520px;
+  max-height: 88vh;
+  overflow-y: auto;
+}
+.mmc-admin-modal h3 { margin-top: 0; }
+.mmc-admin-modal-actions { display: flex; gap: 10px; justify-content: flex-end; margin-top: 18px; }
+
+.mmc-upload-box {
+  border: 2px dashed var(--mmc-border);
+  border-radius: 12px;
+  padding: 26px;
+  text-align: center;
+  margin-bottom: 20px;
+}
+.mmc-upload-box input[type="file"] { margin: 12px auto; display: block; }
+.mmc-upload-hint { font-size: 0.8rem; color: var(--mmc-muted); margin-top: 8px; }
+.mmc-upload-result { margin-top: 14px; font-size: 0.85rem; text-align: left; }
+.mmc-upload-result .success { color: var(--mmc-success); font-weight: 600; }
+.mmc-upload-result ul { max-height: 140px; overflow-y: auto; margin-top: 8px; }
+.mmc-upload-result li { color: var(--mmc-danger); font-size: 0.8rem; padding: 2px 0; }
+
+@media (max-width: 900px) {
+  .mmc-admin-stats-grid { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 560px) {
+  .mmc-admin-stats-grid { grid-template-columns: 1fr; }
+}
+
+.mmc-admin-count {
+  margin-left: auto;
+  font-size: 0.85rem;
+  color: var(--mmc-muted);
+}
+
+/* Search/filter inputs in toolbars that previously used inline minWidth styles */
+.mmc-admin-search-input {
+  min-width: 260px;
+  flex: 1 1 260px;
+}
+
+/* Guarantee tables scroll horizontally instead of crushing columns illegibly */
+.card .table-wrap,
+.mmc-admin-table-wrap {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+.card .table-wrap table {
+  min-width: 640px;
+}
+
+@media (max-width: 720px) {
+  .mmc-admin-page-header { align-items: flex-start; }
+  .mmc-admin-page-header h1 { font-size: 1.25rem; }
+  .mmc-admin-page-header > button,
+  .mmc-admin-page-header > .btn {
+    width: 100%;
+  }
+
+  .mmc-admin-toolbar input,
+  .mmc-admin-toolbar select,
+  .mmc-admin-search-input {
+    flex: 1 1 100%;
+    width: 100%;
+    min-width: 0;
+  }
+
+  .mmc-admin-card { padding: 16px; }
+
+  .mmc-admin-pagination {
+    justify-content: center;
+    flex-wrap: wrap;
+    text-align: center;
+  }
+
+  .mmc-admin-actions { flex-wrap: wrap; }
+
+  .mmc-admin-modal-backdrop { padding: 12px; align-items: flex-start; }
+  .mmc-admin-modal { padding: 20px; max-height: 92vh; }
+  .mmc-admin-modal-actions { flex-wrap: wrap; }
+  .mmc-admin-modal-actions button { flex: 1 1 auto; }
+
+  .mmc-upload-box { padding: 18px; }
+}

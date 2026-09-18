@@ -1,0 +1,137 @@
+.mmc-aside-visual {
+  --mmc-aside-gap: 10px;
+  display: grid;
+  width: min(100%, 380px);
+  margin-left: auto;
+  flex: 0 1 380px;
+}
+
+.mmc-aside-tile {
+  position: relative;
+  display: block;
+  overflow: hidden;
+  border: 1px solid var(--mmc-border);
+  background: #f8fafc;
+  color: inherit;
+  min-width: 0;
+  transition:
+    transform 280ms var(--mmc-ease, cubic-bezier(0.22, 1, 0.36, 1)),
+    box-shadow 280ms var(--mmc-ease, cubic-bezier(0.22, 1, 0.36, 1)),
+    border-color 280ms var(--mmc-ease, cubic-bezier(0.22, 1, 0.36, 1));
+}
+
+.mmc-aside-tile img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  background: #fff;
+}
+
+.mmc-aside-tile span {
+  position: absolute;
+  left: 8px;
+  right: 8px;
+  bottom: 8px;
+  padding: 3px 8px;
+  background: rgba(30, 41, 59, 0.78);
+  color: #fff;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  pointer-events: none;
+}
+
+.mmc-aside-visual--mosaic {
+  grid-template-columns: 1fr 1fr;
+  grid-auto-rows: 92px;
+  gap: var(--mmc-aside-gap);
+}
+
+.mmc-aside-visual--fan {
+  position: relative;
+  height: 200px;
+  display: block;
+}
+
+.mmc-aside-visual--fan .mmc-aside-tile {
+  position: absolute;
+  width: 42%;
+  height: 78%;
+  top: 12%;
+  box-shadow: var(--mmc-shadow);
+}
+
+.mmc-aside-visual--fan .mmc-aside-tile--1 {
+  left: 4%;
+  transform: rotate(-10deg);
+  z-index: 1;
+}
+
+.mmc-aside-visual--fan .mmc-aside-tile--2 {
+  left: 22%;
+  top: 4%;
+  transform: rotate(-3deg);
+  z-index: 2;
+}
+
+.mmc-aside-visual--fan .mmc-aside-tile--3 {
+  left: 40%;
+  top: 8%;
+  transform: rotate(4deg);
+  z-index: 3;
+}
+
+.mmc-aside-visual--fan .mmc-aside-tile--4 {
+  left: 56%;
+  transform: rotate(11deg);
+  z-index: 4;
+}
+
+.mmc-aside-visual--cluster {
+  grid-template-columns: 1.15fr 0.85fr;
+  grid-template-rows: 108px 92px;
+  gap: var(--mmc-aside-gap);
+}
+
+.mmc-aside-visual--cluster .mmc-aside-tile--1 {
+  grid-row: 1 / 3;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .mmc-aside-tile:hover {
+    z-index: 5;
+    border-color: var(--mmc-blue);
+    box-shadow: var(--mmc-shadow-lift);
+    transform: translateY(-4px);
+  }
+
+  .mmc-aside-visual--fan .mmc-aside-tile:hover {
+    transform: translateY(-6px) rotate(0deg) scale(1.04);
+  }
+}
+
+@media (max-width: 900px) {
+  .mmc-aside-visual {
+    width: 100%;
+    max-width: 420px;
+    margin: 8px 0 0;
+  }
+
+  .mmc-aside-visual--fan {
+    position: relative;
+    height: 170px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mmc-aside-tile {
+    transition: none;
+  }
+
+  .mmc-aside-tile:hover,
+  .mmc-aside-visual--fan .mmc-aside-tile:hover {
+    transform: none;
+  }
+}

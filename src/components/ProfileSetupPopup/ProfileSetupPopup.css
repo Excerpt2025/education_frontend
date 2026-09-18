@@ -1,0 +1,204 @@
+/* ============================================================================
+ *  PROFILE SETUP POPUP - bottom sheet
+ * ==========================================================================*/
+
+.mmc-ps-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1400;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  background: rgba(17, 20, 28, 0.45);
+  backdrop-filter: blur(1.5px);
+  animation: mmc-ps-fade 0.2s ease-out;
+}
+
+.mmc-ps-overlay.is-closing {
+  animation: mmc-ps-fade 0.2s ease-in reverse;
+}
+
+.mmc-ps-sheet {
+  width: 100%;
+  max-width: 560px;
+  background: #fff;
+  border-radius: 26px 26px 0 0;
+  padding: 14px 22px 26px;
+  box-shadow: 0 -18px 50px rgba(15, 18, 30, 0.22);
+  outline: none;
+  max-height: 92vh;
+  overflow-y: auto;
+  animation: mmc-ps-rise 0.28s cubic-bezier(0.22, 0.85, 0.3, 1);
+}
+
+.mmc-ps-overlay.is-closing .mmc-ps-sheet {
+  animation: mmc-ps-rise 0.22s ease-in reverse;
+}
+
+.mmc-ps-grip {
+  display: block;
+  width: 46px;
+  height: 5px;
+  margin: 0 auto 18px;
+  border-radius: 999px;
+  background: #1c2430;
+  opacity: 0.85;
+}
+
+.mmc-ps-title {
+  margin: 0 0 8px;
+  font-size: 25px;
+  line-height: 1.22;
+  font-weight: 700;
+  letter-spacing: -0.2px;
+  color: #3c0f4e;
+}
+
+.mmc-ps-sub {
+  margin: 0 0 20px;
+  font-size: 15px;
+  color: #6b7280;
+}
+
+/* --- question card --- */
+.mmc-ps-card {
+  position: relative;
+  background: #fff;
+  border: 1px solid rgba(17, 24, 39, 0.07);
+  border-radius: 20px;
+  padding: 26px 20px 16px;
+  box-shadow: 0 10px 28px rgba(15, 18, 30, 0.1);
+  margin-top: 22px;
+}
+
+.mmc-ps-emoji {
+  position: absolute;
+  top: -20px;
+  left: 18px;
+  width: 44px;
+  height: 44px;
+  display: grid;
+  place-items: center;
+  font-size: 24px;
+  background: #fff;
+  border-radius: 50%;
+  border: 1px solid rgba(17, 24, 39, 0.07);
+  box-shadow: 0 6px 14px rgba(15, 18, 30, 0.1);
+}
+
+.mmc-ps-skip {
+  position: absolute;
+  top: 16px;
+  right: 18px;
+  border: 0;
+  background: none;
+  padding: 6px 4px;
+  font-size: 15px;
+  font-weight: 600;
+  color: #2f3a49;
+  cursor: pointer;
+  border-radius: 8px;
+}
+.mmc-ps-skip:hover { color: #0174cc; }
+.mmc-ps-skip:focus-visible { outline: 2px solid #0174cc; outline-offset: 2px; }
+
+.mmc-ps-question {
+  margin: 14px 0 6px;
+  font-size: 19px;
+  font-weight: 700;
+  color: #11182a;
+}
+
+.mmc-ps-help {
+  margin: 0 0 18px;
+  font-size: 14.5px;
+  line-height: 1.5;
+  color: #545d6c;
+  max-width: 46ch;
+}
+
+.mmc-ps-options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.mmc-ps-option {
+  flex: 0 1 auto;
+  padding: 13px 16px;
+  font-size: 15px;
+  font-weight: 500;
+  color: #1d2533;
+  background: #fff;
+  border: 1px solid rgba(17, 24, 39, 0.16);
+  border-radius: 12px;
+  cursor: pointer;
+  text-align: left;
+  transition: border-color 0.15s ease, background 0.15s ease, color 0.15s ease;
+}
+
+.mmc-ps-option:hover {
+  border-color: #0174cc;
+  background: rgba(1, 116, 204, 0.05);
+}
+
+.mmc-ps-option:focus-visible {
+  outline: 2px solid #0174cc;
+  outline-offset: 2px;
+}
+
+.mmc-ps-option.is-selected {
+  border-color: #0f7a3d;
+  background: #0f7a3d;
+  color: #fff;
+}
+
+.mmc-ps-foot {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  margin-top: 26px;
+  padding-top: 12px;
+}
+
+.mmc-ps-back {
+  justify-self: start;
+  border: 0;
+  background: none;
+  font-size: 14.5px;
+  font-weight: 600;
+  color: #545d6c;
+  cursor: pointer;
+  padding: 6px 2px;
+}
+.mmc-ps-back:hover { color: #0174cc; }
+
+.mmc-ps-count {
+  font-size: 15px;
+  color: #8a93a2;
+  letter-spacing: 0.5px;
+}
+
+@keyframes mmc-ps-rise {
+  from { transform: translateY(100%); }
+  to { transform: translateY(0); }
+}
+
+@keyframes mmc-ps-fade {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* Desktop: float it as a centred dialog instead of a full-width sheet */
+@media (min-width: 720px) {
+  .mmc-ps-overlay { align-items: center; padding: 24px; }
+  .mmc-ps-sheet { border-radius: 24px; padding: 20px 28px 28px; }
+  .mmc-ps-grip { display: none; }
+  .mmc-ps-title { font-size: 26px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mmc-ps-overlay,
+  .mmc-ps-sheet { animation: none; }
+  .mmc-ps-option { transition: none; }
+}

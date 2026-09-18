@@ -1,0 +1,365 @@
+.mmc-cd-page {
+  background: var(--mmc-white);
+  padding-bottom: 96px; /* room for sticky bar */
+}
+
+.mmc-cd-loading {
+  padding: 120px 24px;
+  text-align: center;
+  color: var(--mmc-muted);
+  font-size: 1rem;
+}
+.mmc-cd-loading a { color: var(--mmc-blue); font-weight: 700; }
+
+/* ---------- GALLERY HERO ---------- */
+.mmc-cd-hero {
+  position: relative;
+  height: 320px;
+  overflow: hidden;
+  background: var(--mmc-dark);
+}
+.mmc-cd-hero-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+.mmc-cd-hero-scrim {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0.35) 0%, transparent 25%, transparent 70%, rgba(0, 0, 0, 0.25) 100%);
+  pointer-events: none;
+}
+.mmc-cd-hero-btn {
+  position: absolute;
+  top: 18px;
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.92);
+  color: var(--mmc-dark);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+  transition: transform 180ms ease, color 180ms ease;
+}
+.mmc-cd-hero-btn:hover { transform: translateY(-1px); }
+.mmc-cd-hero-btn.is-active { color: var(--mmc-orange); }
+.mmc-cd-hero-back { left: 18px; }
+.mmc-cd-hero-actions { position: absolute; top: 18px; right: 18px; display: flex; gap: 10px; }
+.mmc-cd-hero-count {
+  position: absolute;
+  bottom: 16px;
+  right: 16px;
+  background: rgba(0, 0, 0, 0.55);
+  color: #fff;
+  font-size: 0.78rem;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: 999px;
+}
+.mmc-cd-hero-nav {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.85);
+  color: var(--mmc-dark);
+  font-size: 1.3rem;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.mmc-cd-hero-prev { left: 14px; }
+.mmc-cd-hero-next { right: 14px; }
+
+/* ---------- IDENTITY CARD ---------- */
+.mmc-cd-identity {
+  position: relative;
+  text-align: center;
+  padding: 56px 24px 28px;
+  border-bottom: 1px solid var(--mmc-border);
+}
+.mmc-cd-logo {
+  position: absolute;
+  top: -46px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 92px;
+  height: 92px;
+  border-radius: 50%;
+  background: var(--mmc-white);
+  box-shadow: 0 10px 26px rgba(30, 41, 59, 0.18);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  border: 4px solid var(--mmc-white);
+}
+.mmc-cd-logo img { width: 68%; height: 68%; object-fit: contain; }
+
+.mmc-cd-identity h1 {
+  font-size: 1.5rem;
+  margin: 4px 0 8px;
+  color: var(--mmc-dark);
+}
+.mmc-cd-estd {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  color: var(--mmc-muted);
+  margin-bottom: 24px;
+}
+.mmc-cd-estd span { width: 30px; height: 1px; background: var(--mmc-border); }
+
+.mmc-cd-facts {
+  display: flex;
+  justify-content: center;
+  gap: 56px;
+  flex-wrap: wrap;
+}
+.mmc-cd-fact {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  color: var(--mmc-blue);
+}
+.mmc-cd-fact-label {
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: var(--mmc-muted);
+  text-transform: uppercase;
+}
+.mmc-cd-fact strong { color: var(--mmc-dark); font-size: 0.95rem; font-weight: 700; }
+
+/* ---------- TABS ---------- */
+.mmc-cd-tabs-wrap {
+  position: sticky;
+  top: 72px;
+  z-index: 20;
+  background: var(--mmc-white);
+  border-bottom: 1px solid var(--mmc-border);
+}
+.mmc-cd-tabs {
+  display: flex;
+  gap: 4px;
+  overflow-x: auto;
+  padding: 0 18px;
+  scrollbar-width: none;
+}
+.mmc-cd-tabs::-webkit-scrollbar { display: none; }
+.mmc-cd-tab {
+  flex-shrink: 0;
+  padding: 16px 14px 12px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--mmc-muted);
+  border-bottom: 3px solid transparent;
+  white-space: nowrap;
+  transition: color 180ms ease, border-color 180ms ease;
+}
+.mmc-cd-tab.is-active {
+  color: var(--mmc-blue);
+  border-bottom-color: var(--mmc-orange);
+}
+
+/* ---------- PANEL ---------- */
+.mmc-cd-panel {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 28px 20px 10px;
+}
+.mmc-cd-panel-title {
+  font-size: 1.05rem;
+  color: var(--mmc-dark);
+  margin: 26px 0 16px;
+}
+.mmc-cd-panel-title:first-child { margin-top: 0; }
+.mmc-cd-empty { color: var(--mmc-muted); text-align: center; padding: 30px 0; }
+
+/* gallery grid */
+.mmc-cd-gallery-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+}
+.mmc-cd-gallery-thumb {
+  border-radius: 12px;
+  overflow: hidden;
+  aspect-ratio: 1;
+  padding: 0;
+  border: 0;
+}
+.mmc-cd-gallery-thumb img { width: 100%; height: 100%; object-fit: cover; transition: transform 300ms ease; }
+.mmc-cd-gallery-thumb:hover img { transform: scale(1.06); }
+
+/* basic info / accreditations */
+.mmc-cd-accred-row { display: flex; gap: 28px; flex-wrap: wrap; justify-content: center; }
+.mmc-cd-accred { display: flex; flex-direction: column; align-items: center; gap: 8px; }
+.mmc-cd-accred-badge {
+  width: 64px; height: 64px; border-radius: 50%;
+  background: var(--mmc-surface-blue, #e8f3fb);
+  color: var(--mmc-blue);
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: var(--mmc-shadow);
+}
+.mmc-cd-accred:nth-child(even) .mmc-cd-accred-badge { background: var(--mmc-surface-orange, #fff3e6); color: var(--mmc-orange); }
+.mmc-cd-accred span { font-size: 0.82rem; font-weight: 700; color: var(--mmc-dark); text-align: center; }
+.mmc-cd-about-text { color: var(--mmc-muted); line-height: 1.7; }
+
+/* courses */
+.mmc-cd-courses { display: flex; flex-direction: column; gap: 18px; }
+.mmc-cd-course-card {
+  border: 1px solid var(--mmc-border);
+  border-radius: 16px;
+  padding: 20px;
+  background: var(--mmc-white);
+  box-shadow: var(--mmc-shadow);
+  transition: box-shadow 220ms ease, transform 220ms ease;
+}
+.mmc-cd-course-card:hover { box-shadow: var(--mmc-shadow-lift); transform: translateY(-2px); }
+.mmc-cd-course-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
+.mmc-cd-status { display: flex; align-items: center; gap: 6px; font-size: 0.8rem; font-weight: 700; }
+.mmc-cd-status i { width: 8px; height: 8px; border-radius: 50%; display: inline-block; }
+.mmc-cd-status.is-open { color: #1f9d55; }
+.mmc-cd-status.is-open i { background: #1f9d55; }
+.mmc-cd-status.is-closed { color: var(--mmc-orange-dark); }
+.mmc-cd-status.is-closed i { background: var(--mmc-orange); }
+.mmc-cd-shortlist {
+  display: flex; align-items: center; gap: 6px;
+  font-size: 0.82rem; font-weight: 700; color: var(--mmc-blue);
+  background: var(--mmc-surface-blue, #e8f3fb);
+  padding: 6px 12px; border-radius: 999px;
+  transition: background 180ms ease, color 180ms ease;
+}
+.mmc-cd-shortlist.is-active { background: var(--mmc-blue); color: #fff; }
+
+.mmc-cd-course-card h3 { font-size: 1.1rem; margin: 0 0 4px; color: var(--mmc-dark); }
+.mmc-cd-course-degree { color: var(--mmc-muted); font-size: 0.85rem; margin-bottom: 14px; }
+.mmc-cd-course-tags { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 16px; }
+.mmc-cd-course-tags span {
+  background: var(--mmc-surface);
+  color: var(--mmc-muted);
+  font-size: 0.78rem;
+  font-weight: 600;
+  padding: 5px 12px;
+  border-radius: 999px;
+}
+.mmc-cd-course-fees {
+  display: flex;
+  gap: 32px;
+  padding: 14px 0;
+  border-top: 1px solid var(--mmc-border);
+  border-bottom: 1px solid var(--mmc-border);
+  margin-bottom: 16px;
+}
+.mmc-cd-course-fees > div { display: flex; flex-direction: column; gap: 4px; }
+.mmc-cd-course-fees span { font-size: 0.72rem; font-weight: 700; letter-spacing: 0.06em; color: var(--mmc-muted); text-transform: uppercase; }
+.mmc-cd-course-fees strong { font-size: 1.05rem; color: var(--mmc-dark); }
+.mmc-cd-course-info-btn {
+  display: block;
+  text-align: center;
+  width: 100%;
+  padding: 12px;
+  border-radius: 10px;
+  background: var(--mmc-surface-blue, #e8f3fb);
+  color: var(--mmc-blue);
+  font-weight: 700;
+  transition: background 180ms ease, color 180ms ease;
+}
+.mmc-cd-course-info-btn:hover { background: var(--mmc-blue); color: #fff; }
+
+/* bullet lists (must-know / support / safety) */
+.mmc-cd-bullet-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 14px; }
+.mmc-cd-bullet-list li {
+  position: relative;
+  padding-left: 26px;
+  color: var(--mmc-muted);
+  line-height: 1.6;
+}
+.mmc-cd-bullet-list li::before {
+  content: '';
+  position: absolute;
+  left: 0; top: 8px;
+  width: 10px; height: 10px;
+  border-radius: 50%;
+  background: var(--mmc-gradient-orange-blue);
+}
+
+/* amenities */
+.mmc-cd-amenities-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+.mmc-cd-amenity {
+  display: flex; flex-direction: column; align-items: center; gap: 10px;
+  padding: 22px 10px;
+  border-radius: 14px;
+  background: var(--mmc-surface);
+  color: var(--mmc-blue);
+  font-size: 0.82rem;
+  font-weight: 700;
+  text-align: center;
+}
+.mmc-cd-amenity:nth-child(3n+2) { color: var(--mmc-orange); }
+.mmc-cd-amenity:nth-child(3n) { color: var(--mmc-dark); }
+.mmc-cd-amenity span { color: var(--mmc-dark); }
+
+/* contact */
+.mmc-cd-contact { display: flex; flex-direction: column; gap: 16px; }
+.mmc-cd-contact-row { display: flex; align-items: center; gap: 12px; color: var(--mmc-dark); font-weight: 600; }
+.mmc-cd-contact-cta { margin-top: 8px; width: 100%; text-align: center; }
+
+/* ---------- STICKY BOTTOM BAR ---------- */
+.mmc-cd-sticky-bar {
+  position: fixed;
+  left: 0; right: 0; bottom: 0;
+  z-index: 40;
+  background: var(--mmc-white);
+  border-top: 1px solid var(--mmc-border);
+  box-shadow: 0 -8px 24px rgba(30, 41, 59, 0.1);
+  padding: 14px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+.mmc-cd-sticky-bar strong { display: block; font-size: 1rem; color: var(--mmc-dark); }
+.mmc-cd-sticky-bar span { display: block; font-size: 0.78rem; color: var(--mmc-muted); }
+.mmc-cd-view-courses {
+  flex-shrink: 0;
+  padding: 13px 26px;
+  border-radius: 999px;
+  background: var(--mmc-gradient-orange-blue);
+  color: #fff;
+  font-weight: 700;
+  font-size: 0.92rem;
+  box-shadow: var(--mmc-shadow-orange);
+  transition: transform 180ms ease;
+}
+.mmc-cd-view-courses:hover { transform: translateY(-2px); }
+
+@media (max-width: 640px) {
+  .mmc-cd-hero { height: 260px; }
+  .mmc-cd-tabs-wrap { top: 64px; }
+  .mmc-cd-amenities-grid { grid-template-columns: repeat(2, 1fr); }
+  .mmc-cd-facts { gap: 32px; }
+}
+
+/* Keep the global WhatsApp float button clear of this page's sticky bar */
+body.mmc-has-sticky-college-bar .mmc-whatsapp-float {
+  bottom: 92px !important;
+  transition: bottom 200ms ease;
+}
+@media (max-width: 640px) {
+  body.mmc-has-sticky-college-bar .mmc-whatsapp-float {
+    bottom: 84px !important;
+  }
+}

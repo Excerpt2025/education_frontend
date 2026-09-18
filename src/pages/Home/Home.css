@@ -1,0 +1,58 @@
+.mmc-home {
+  --mmc-px: 0;
+  --mmc-py: 0;
+}
+
+.mmc-cta-band {
+  background: var(--mmc-wash-brand);
+  padding: 48px 0 80px;
+}
+
+.mmc-cta-band-inner {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 28px;
+  align-items: center;
+  padding: 28px 32px;
+  background:
+    linear-gradient(#fff, #fff) padding-box,
+    linear-gradient(90deg, var(--mmc-blue), var(--mmc-orange)) border-box;
+  border: 2px solid transparent;
+  box-shadow: var(--mmc-shadow);
+  border-radius: 0;
+}
+
+.mmc-cta-band-inner h2 {
+  margin: 0 0 8px;
+  font-size: 2rem;
+  letter-spacing: -0.03em;
+  color: var(--mmc-blue);
+}
+
+.mmc-cta-band-inner p {
+  margin: 0;
+  color: var(--mmc-muted);
+}
+
+.mmc-cta-band .btn-ink {
+  background: var(--mmc-orange);
+  border-radius: 4px;
+  box-shadow: var(--mmc-shadow-orange);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  font-size: 0.78rem;
+}
+
+.mmc-cta-band .btn-ink:hover:not(:disabled) {
+  background: var(--mmc-orange-dark);
+}
+
+@media (max-width: 620px) {
+  .mmc-cta-band { padding: 32px 0 56px; }
+  .mmc-cta-band-inner {
+    grid-template-columns: 1fr;
+    text-align: left;
+  }
+  .mmc-cta-band-inner .btn { width: 100%; }
+  .mmc-cta-band-inner h2 { font-size: 1.55rem; }
+}

@@ -1,0 +1,39 @@
+.mmc-ca-admin-header-actions { display: flex; gap: 10px; }
+.mmc-ca-upload-btn { cursor: pointer; }
+.mmc-ca-upload-msg { font-size: 0.85rem; color: var(--mmc-blue-dark); margin: -10px 0 14px; }
+
+.mmc-ca-category-filter { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 16px; }
+.mmc-ca-category-filter button {
+  border: 1px solid var(--mmc-border); background: #fff; color: var(--mmc-muted);
+  padding: 6px 14px; border-radius: 50px; font-size: 0.8rem; font-weight: 600; cursor: pointer;
+}
+.mmc-ca-category-filter button.active { background: var(--mmc-dark); border-color: var(--mmc-dark); color: #fff; }
+
+.mmc-ca-option-preview { display: flex; flex-direction: column; gap: 6px; }
+.mmc-ca-option-preview strong { font-size: 0.8rem; display: block; }
+.mmc-ca-weight-chip {
+  display: inline-block; background: var(--mmc-blue-light); color: var(--mmc-blue-dark);
+  font-size: 0.68rem; font-weight: 600; padding: 2px 8px; border-radius: 50px; margin: 3px 6px 0 0;
+}
+
+.mmc-ca-question-modal { max-width: 700px; width: 100%; }
+.mmc-ca-options-label { display: block; font-weight: 700; font-size: 0.85rem; margin: 18px 0 10px; color: var(--mmc-dark); }
+.mmc-ca-option-row {
+  border: 1px solid var(--mmc-border); border-radius: 10px; padding: 12px; margin-bottom: 12px; background: var(--mmc-surface);
+}
+.mmc-ca-option-row-head { display: flex; gap: 8px; margin-bottom: 10px; }
+.mmc-ca-option-row-head input {
+  flex: 1; padding: 8px 10px; border: 1px solid var(--mmc-border); border-radius: 8px; font-family: var(--mmc-font);
+}
+.mmc-ca-option-remove {
+  width: 30px; height: 30px; border-radius: 50%; border: none; background: var(--mmc-danger-bg); color: var(--mmc-danger);
+  font-size: 1rem; cursor: pointer; flex-shrink: 0;
+}
+.mmc-ca-weights-grid {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 8px;
+}
+.mmc-ca-weight-input { display: flex; flex-direction: column; gap: 3px; font-size: 0.7rem; color: var(--mmc-muted); }
+.mmc-ca-weight-input input {
+  padding: 6px 8px; border: 1px solid var(--mmc-border); border-radius: 6px; font-family: var(--mmc-font); font-size: 0.85rem;
+}
+.mmc-ca-add-option { margin-top: 4px; margin-bottom: 18px; }

@@ -1,0 +1,125 @@
+.mmc-report-wrap {
+  --rep-purple: #7c3aed;
+  --rep-pink: #db2777;
+  --rep-teal: #0d9488;
+}
+
+.mmc-report-actions {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 18px;
+}
+
+.mmc-report-card {
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(160deg, #ffffff 0%, var(--mmc-blue-light) 55%, var(--mmc-orange-light) 130%);
+  border-radius: 22px;
+  padding: 34px;
+  box-shadow: var(--mmc-shadow-lift, 0 20px 50px rgba(15,23,42,0.12));
+  animation: mmc-report-in 420ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+@keyframes mmc-report-in {
+  from { opacity: 0; transform: translateY(16px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.mmc-report-wrap.is-compact .mmc-report-card { padding: 22px; border-radius: 16px; }
+
+.mmc-report-blob { position: absolute; border-radius: 50%; pointer-events: none; }
+.mmc-report-blob-a { top: -100px; right: -80px; width: 260px; height: 260px; background: radial-gradient(circle, var(--mmc-orange-glow) 0%, transparent 70%); }
+.mmc-report-blob-b { bottom: -120px; left: -60px; width: 240px; height: 240px; background: radial-gradient(circle, var(--mmc-blue-glow) 0%, transparent 70%); }
+
+.mmc-report-head { position: relative; z-index: 1; margin-bottom: 18px; }
+.mmc-report-badge {
+  display: inline-flex; align-items: center;
+  background: var(--mmc-gradient-orange-blue);
+  color: #fff; font-size: 0.7rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.06em;
+  padding: 6px 14px; border-radius: 50px; margin-bottom: 12px;
+}
+.mmc-report-head h2 {
+  margin: 0 0 6px;
+  font-size: clamp(1.5rem, 3vw, 2.1rem);
+  background: linear-gradient(120deg, var(--mmc-blue-dark), var(--rep-purple), var(--mmc-orange));
+  background-size: 200% auto;
+  -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
+  animation: mmc-report-gradient 6s ease infinite;
+}
+@keyframes mmc-report-gradient {
+  0%, 100% { background-position: 0% center; }
+  50% { background-position: 100% center; }
+}
+.mmc-report-name { margin: 0; color: var(--mmc-muted); font-size: 0.85rem; }
+
+.mmc-report-top-field {
+  position: relative; z-index: 1;
+  background: rgba(255,255,255,0.75);
+  border-radius: 14px;
+  padding: 16px 20px;
+  margin-bottom: 22px;
+}
+.mmc-report-top-label { font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: var(--mmc-orange-dark); }
+.mmc-report-top-field h3 { margin: 4px 0 4px; font-size: 1.25rem; color: var(--mmc-dark); }
+.mmc-report-top-field p { margin: 0; color: var(--mmc-muted); font-size: 0.85rem; }
+
+.mmc-report-section { position: relative; z-index: 1; margin-bottom: 24px; }
+.mmc-report-section h4 { margin: 0 0 12px; font-size: 1rem; color: var(--mmc-dark); }
+
+.mmc-report-bars { display: flex; flex-direction: column; gap: 10px; }
+.mmc-report-bar-row { display: grid; grid-template-columns: 140px 1fr 30px; align-items: center; gap: 10px; }
+.mmc-report-bar-label { font-size: 0.78rem; font-weight: 600; color: var(--mmc-dark); }
+.mmc-report-bar-track { height: 10px; border-radius: 50px; background: rgba(15,23,42,0.08); overflow: hidden; }
+.mmc-report-bar-fill { height: 100%; border-radius: 50px; animation: mmc-bar-grow 900ms cubic-bezier(0.22,1,0.36,1) both; }
+@keyframes mmc-bar-grow { from { width: 0 !important; } }
+.mmc-report-bar-fill.accent-0 { background: linear-gradient(90deg, var(--mmc-blue), var(--mmc-blue-dark)); }
+.mmc-report-bar-fill.accent-1 { background: linear-gradient(90deg, var(--mmc-orange), var(--mmc-orange-dark)); }
+.mmc-report-bar-fill.accent-2 { background: linear-gradient(90deg, var(--rep-purple), #a855f7); }
+.mmc-report-bar-fill.accent-3 { background: linear-gradient(90deg, var(--rep-teal), #22c55e); }
+.mmc-report-bar-score { font-size: 0.78rem; font-weight: 700; color: var(--mmc-muted); text-align: right; }
+
+.mmc-report-careers { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; }
+.mmc-report-career-card {
+  background: rgba(255,255,255,0.8);
+  border-left: 3px solid var(--mmc-orange);
+  border-radius: 12px;
+  padding: 12px 14px;
+}
+.mmc-report-career-card:nth-child(2) { border-left-color: var(--mmc-blue); }
+.mmc-report-career-card:nth-child(3) { border-left-color: var(--rep-purple); }
+.mmc-report-career-card strong { display: block; font-size: 0.9rem; color: var(--mmc-dark); margin-bottom: 4px; }
+.mmc-report-career-card p { margin: 0; font-size: 0.8rem; color: var(--mmc-muted); line-height: 1.5; }
+
+.mmc-report-chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.mmc-report-chips span {
+  background: rgba(255,255,255,0.85); border: 1px solid rgba(15,23,42,0.08);
+  padding: 6px 14px; border-radius: 50px; font-size: 0.78rem; font-weight: 600; color: var(--mmc-dark);
+}
+
+.mmc-report-roadmap { display: flex; flex-direction: column; gap: 14px; }
+.mmc-report-roadmap-step { display: flex; gap: 12px; align-items: flex-start; }
+.mmc-report-roadmap-dot {
+  flex-shrink: 0; width: 26px; height: 26px; border-radius: 50%;
+  background: var(--mmc-gradient-orange-blue); color: #fff;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0.75rem; font-weight: 800;
+}
+.mmc-report-roadmap-step strong { display: block; font-size: 0.88rem; color: var(--mmc-dark); margin-bottom: 2px; }
+.mmc-report-roadmap-step p { margin: 0; font-size: 0.8rem; color: var(--mmc-muted); line-height: 1.5; }
+
+.mmc-report-two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+.mmc-report-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
+.mmc-report-list li {
+  font-size: 0.82rem; padding: 8px 12px; border-radius: 10px; background: rgba(255,255,255,0.7);
+}
+.mmc-report-list.is-good li { border-left: 3px solid var(--rep-teal); }
+.mmc-report-list.is-growth li { border-left: 3px solid var(--mmc-orange); }
+
+.mmc-report-footnote { background: rgba(255,255,255,0.6); border-radius: 12px; padding: 14px 18px; }
+.mmc-report-footnote p { margin: 0 0 6px; font-size: 0.82rem; color: var(--mmc-dark); }
+.mmc-report-footnote p:last-child { margin-bottom: 0; }
+
+@media (max-width: 640px) {
+  .mmc-report-card { padding: 22px 18px; }
+  .mmc-report-bar-row { grid-template-columns: 100px 1fr 26px; }
+  .mmc-report-two-col { grid-template-columns: 1fr; }
+}
