@@ -79,12 +79,9 @@ function Contact() {
 
         <div className="mmc-contact-split">
 
-          <MotionReveal
-            className="mmc-contact-visual"
-            delay={90}
-          >
-            <SplineScene />
-          </MotionReveal>
+        
+            <img src="/images/contactus.jpg" alt="Contact us" loading="lazy" className=''/>
+          
 
           <MotionReveal
             className="mmc-contact-panel"

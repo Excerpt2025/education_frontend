@@ -6,13 +6,7 @@ export const CONTACT_SPLINE_SCENE =
 export default function SplineScene() {
   return (
     <div className="mmc-spline-stage" aria-hidden="true">
-      <iframe
-        src={CONTACT_SPLINE_SCENE}
-        title="3D Contact Scene"
-        loading="lazy"
-        frameBorder="0"
-        allow="fullscreen"
-      />
+      <image src="/images/contactus.jpg" alt="Spline Scene" className="mmc-spline-image" />
       {/* Covers Spline free-tier badge (cross-origin iframe can't remove it) */}
       <span className="mmc-spline-badge-cover" />
     </div>
