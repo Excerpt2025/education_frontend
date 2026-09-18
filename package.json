@@ -21,7 +21,7 @@
     "start": "vite",
     "build": "vite build",
     "preview": "vite preview",
-    "view-build": "serve build"
+    "view-build": "serve dist"
   },
   "browserslist": {
     "production": [
