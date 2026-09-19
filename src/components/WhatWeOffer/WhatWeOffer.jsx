@@ -117,9 +117,12 @@ export default function WhatWeOffer() {
             <div className="mmc-offer-hub-ring" aria-hidden="true" />
             <div className="mmc-offer-hub-core">
               <img
-                src="/images/hero-journey-4.png"
+                src="/images/degree 360.png"
                 alt="Student progressing toward a professional career"
                 loading="lazy"
+                style={{objectFit: 'contain'}}
+                width={100}
+                height={100}
               />
             </div>
             <div className="mmc-offer-hub-badge">
