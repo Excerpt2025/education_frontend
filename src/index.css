@@ -44,8 +44,13 @@
   --mmc-shadow-blue: 0 6px 18px rgba(1, 116, 204, 0.32);
   --mmc-radius: 18px;
   --mmc-radius-lg: 28px;
-  --mmc-font: 'Poppins', 'Segoe UI', sans-serif;
-  --mmc-font-serif: 'Merriweather', serif;
+  /* Body / paragraphs */
+  --mmc-font: 'Ancizar Sans', 'Fredoka', 'Segoe UI', sans-serif;
+  /* Headings (site-wide) */
+  --mmc-font-heading: 'Pacifico', cursive;
+  /* Previous display fonts — hero + offer card titles */
+  --mmc-font-display: 'Poppins', 'Segoe UI', sans-serif;
+  --mmc-font-serif: 'Merriweather', Georgia, serif;
   --mmc-font-mono: 'IBM Plex Mono', 'Courier New', monospace;
 }
 
@@ -62,6 +67,14 @@ html, body, #root {
      etc.) from creating horizontal scroll / cut-off content on mobile. */
   overflow-x: hidden;
   width: 100%;
+}
+
+h1, h2, h3, h4, h5, h6,
+.mmc-heading-italic,
+.section-title h2 {
+  font-family: var(--mmc-font-heading);
+  font-weight: 400;
+  letter-spacing: 0.01em;
 }
 
 a { text-decoration: none; color: inherit; }
@@ -191,6 +204,7 @@ img { max-width: 100%; display: block; }
 
 .mmc-section-eyebrow {
   margin: 0 0 10px;
+  font-family: var(--mmc-font);
   font-size: 0.72rem;
   font-weight: 700;
   letter-spacing: 0.14em;

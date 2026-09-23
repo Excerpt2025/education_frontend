@@ -65,6 +65,7 @@
 
 .mmc-hero-copy h1 {
   margin: 0 0 16px;
+  font-family: var(--mmc-font-display);
   font-size: clamp(2.2rem, 4.4vw, 3.5rem);
   line-height: 1.18;
   letter-spacing: -0.045em;
@@ -244,7 +245,7 @@
   z-index: 1;
   width: 100%;
   max-width: 560px;
-  aspect-ratio: 1 / 1;
+  aspect-ratio: 1 / 1.25;
   min-height: 0;
   overflow: visible;
   padding: 0;

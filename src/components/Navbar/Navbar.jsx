@@ -61,11 +61,14 @@ export default function Navbar() {
           <Link to="/" className="mmc-brand" onClick={close}>
             <img
               src="/images/logo.png"
-              alt="MapMyCareer360"
+              alt=""
               className={`mmc-brand-img ${logoLoaded ? 'is-loaded' : ''}`}
               onLoad={() => setLogoLoaded(true)}
               onError={(e) => { e.currentTarget.style.display = 'none'; }}
             />
+            <span className="mmc-brand-name">
+              MapMyCareer<span className="mmc-brand-360">360</span>
+            </span>
           </Link>
 
           <nav className={`mmc-nav-links ${open ? 'open' : ''}`}>

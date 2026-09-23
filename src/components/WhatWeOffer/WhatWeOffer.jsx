@@ -72,18 +72,22 @@ function OfferCard({ offer, index }) {
         className={`mmc-offer-card mmc-offer-card--${offer.tone}`}
         aria-label={`${offer.title}. ${offer.description}`}
       >
-        <span className="mmc-offer-card-top">
-          <span className="mmc-offer-icon" aria-hidden="true">
-            <OutlineIcon name={offer.icon} size={20} />
+        <span className="mmc-offer-card-glow" aria-hidden="true" />
+        <span className="mmc-offer-card-mark" aria-hidden="true">{offer.n}</span>
+        <span className="mmc-offer-card-body">
+          <span className="mmc-offer-card-top">
+            <span className="mmc-offer-icon" aria-hidden="true">
+              <OutlineIcon name={offer.icon} size={22} />
+            </span>
+            <span className="mmc-offer-n">{offer.n}</span>
           </span>
-          <span className="mmc-offer-n">{offer.n}</span>
-        </span>
-        <strong className="mmc-offer-title mmc-heading-italic">
-          <AnimatedText delay={staggerDelay(index, 40)}>{offer.title}</AnimatedText>
-        </strong>
-        <span className="mmc-offer-text">{offer.description}</span>
-        <span className="mmc-offer-go">
-          Explore <OutlineIcon name="arrow" size={14} />
+          <strong className="mmc-offer-title mmc-heading-italic">
+            <AnimatedText delay={staggerDelay(index, 40)}>{offer.title}</AnimatedText>
+          </strong>
+          <span className="mmc-offer-text">{offer.description}</span>
+          <span className="mmc-offer-go">
+            Explore <OutlineIcon name="arrow" size={14} />
+          </span>
         </span>
       </Link>
     </ScrollCard>
@@ -118,11 +122,10 @@ export default function WhatWeOffer() {
             <div className="mmc-offer-hub-core">
               <img
                 src="/images/degree 360.png"
-                alt="Student progressing toward a professional career"
+                alt="MapMyCareer 360"
                 loading="lazy"
-                style={{objectFit: 'contain'}}
-                width={100}
-                height={100}
+                width={270}
+                height={270}
               />
             </div>
             <div className="mmc-offer-hub-badge">
