@@ -44,14 +44,12 @@
   --mmc-shadow-blue: 0 6px 18px rgba(1, 116, 204, 0.32);
   --mmc-radius: 18px;
   --mmc-radius-lg: 28px;
-  /* Body / paragraphs */
-  --mmc-font: 'Ancizar Sans', 'Fredoka', 'Segoe UI', sans-serif;
-  /* Headings (site-wide) */
-  --mmc-font-heading: 'Pacifico', cursive;
-  /* Previous display fonts — hero + offer card titles */
-  --mmc-font-display: 'Poppins', 'Segoe UI', sans-serif;
-  --mmc-font-serif: 'Merriweather', Georgia, serif;
-  --mmc-font-mono: 'IBM Plex Mono', 'Courier New', monospace;
+  /* Single site-wide font stack */
+  --mmc-font: 'Inter', system-ui, -apple-system, sans-serif;
+  --mmc-font-heading: 'Inter', system-ui, -apple-system, sans-serif;
+  --mmc-font-display: 'Inter', system-ui, -apple-system, sans-serif;
+  --mmc-font-serif: 'Inter', system-ui, -apple-system, sans-serif;
+  --mmc-font-mono: 'Inter', system-ui, -apple-system, sans-serif;
 }
 
 * { box-sizing: border-box; }
@@ -59,7 +57,7 @@
 html, body, #root {
   margin: 0;
   padding: 0;
-  font-family: var(--mmc-font);
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
   background: var(--mmc-white);
   color: var(--mmc-dark);
   scroll-behavior: smooth;
@@ -72,9 +70,9 @@ html, body, #root {
 h1, h2, h3, h4, h5, h6,
 .mmc-heading-italic,
 .section-title h2 {
-  font-family: var(--mmc-font-heading);
-  font-weight: 400;
-  letter-spacing: 0.01em;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  font-weight: 700;
+  letter-spacing: -0.02em;
 }
 
 a { text-decoration: none; color: inherit; }

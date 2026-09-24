@@ -190,8 +190,8 @@
 }
 
 .mmc-heading-italic {
-  font-family: var(--mmc-font-heading);
-  font-style: normal;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  font-style: italic;
 }
 
 .mmc-anim-word--mark {
