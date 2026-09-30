@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import api from '../../api/api.js';
-import { useAdminAuth } from '../../context/AdminAuthContext.jsx';
+// import { useAdminAuth } from '../../context/AdminAuthContext.jsx';
+import { useAdminAuth } from '../../context/useAdminAuth';
 import '../AdminCommon.css';
 
 export default function AdminSettings() {

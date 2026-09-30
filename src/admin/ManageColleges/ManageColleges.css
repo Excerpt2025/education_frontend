@@ -66,3 +66,11 @@
 }
 .mmc-mc-name-cell div { display: flex; flex-direction: column; }
 .mmc-mc-name-cell span { font-size: 0.75rem; color: var(--mmc-muted); }
+
+
+.mmc-mc-hint { margin: 0 0 12px; font-size: .85rem; color: #66768a; }
+.mmc-mc-prog-group { padding: 10px 0; border-top: 1px solid #e6eef6; }
+.mmc-mc-prog-group:first-of-type { border-top: 0; }
+.mmc-mc-prog-title { display: flex; align-items: center; gap: 8px; font-weight: 700; color: #0f2a4a; margin-bottom: 8px; }
+.mmc-mc-prog-list { display: flex; flex-wrap: wrap; gap: 8px 18px; padding-left: 26px; }
+.mmc-mc-prog-item { display: inline-flex; align-items: center; gap: 6px; font-size: .9rem; }

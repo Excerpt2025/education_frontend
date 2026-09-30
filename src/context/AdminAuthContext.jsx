@@ -1,7 +1,8 @@
-import React, { createContext, useContext, useEffect, useState } from 'react';
+// import React, { createContext, useContext, useEffect, useState } from 'react';
+import React, { createContext, useEffect, useState } from 'react';
 import api from '../api/api.js';
 
-const AdminAuthContext = createContext(null);
+export const AdminAuthContext = createContext(null);
 
 export function AdminAuthProvider({ children }) {
   const [admin, setAdmin] = useState(null);
@@ -33,6 +34,4 @@ export function AdminAuthProvider({ children }) {
   );
 }
 
-export function useAdminAuth() {
-  return useContext(AdminAuthContext);
-}
+

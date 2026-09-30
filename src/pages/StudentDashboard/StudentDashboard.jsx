@@ -1,9 +1,10 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import api, { getImageUrl } from '../../api/api.js';
-import { useAuth } from '../../context/AuthContext.jsx';
+import { useAuth } from '../../context/useAuth.js';;
 import OutlineIcon from '../../components/icons/OutlineIcon.jsx';
 import CareerReportCard from '../../components/CareerReportCard/CareerReportCard.jsx';
+import KycSection from './KycSection.jsx';
 import './StudentDashboard.css';
 
 const TABS = [
@@ -56,9 +57,6 @@ export default function StudentDashboard() {
   const [saving, setSaving] = useState(false);
   const [savedMsg, setSavedMsg] = useState('');
   const [copied, setCopied] = useState(false);
-  const [kycForm, setKycForm] = useState({ accountHolderName: '', bankName: '', accountNumber: '', confirmAccountNumber: '', ifsc: '', panNumber: '', upiId: '' });
-  const [kycSaving, setKycSaving] = useState(false);
-  const [kycMsg, setKycMsg] = useState({ type: '', text: '' });
   const [viewingReport, setViewingReport] = useState(null);
 
   useEffect(() => {
@@ -68,14 +66,6 @@ export default function StudentDashboard() {
         fullName: res.data.profile.fullName, phone: res.data.profile.phone,
         gender: res.data.profile.gender || '', address: res.data.profile.address || '',
       });
-      const kyc = res.data.profile.kyc;
-      if (kyc) {
-        setKycForm({
-          accountHolderName: kyc.accountHolderName || '', bankName: kyc.bankName || '',
-          accountNumber: kyc.accountNumber || '', confirmAccountNumber: kyc.accountNumber || '',
-          ifsc: kyc.ifsc || '', panNumber: kyc.panNumber || '', upiId: kyc.upiId || '',
-        });
-      }
     }).catch(() => {});
     api.get('/referrals/my').then((res) => setReferral(res.data)).catch(() => {});
   }, []);
@@ -90,40 +80,6 @@ export default function StudentDashboard() {
       setSavedMsg('Could not update profile.');
     } finally {
       setSaving(false);
-    }
-  };
-
-  const saveKyc = async (e) => {
-    e.preventDefault();
-    setKycMsg({ type: '', text: '' });
-    if (kycForm.accountNumber !== kycForm.confirmAccountNumber) {
-      setKycMsg({ type: 'error', text: 'Account number and confirmation do not match.' });
-      return;
-    }
-    if (!/^[A-Z]{4}0[A-Z0-9]{6}$/i.test(kycForm.ifsc.trim())) {
-      setKycMsg({ type: 'error', text: 'Enter a valid 11-character IFSC code (e.g. HDFC0001234).' });
-      return;
-    }
-    if (!/^[A-Z]{5}[0-9]{4}[A-Z]$/i.test(kycForm.panNumber.trim())) {
-      setKycMsg({ type: 'error', text: 'Enter a valid 10-character PAN (e.g. ABCDE1234F).' });
-      return;
-    }
-    setKycSaving(true);
-    try {
-      const res = await api.put('/students/kyc', {
-        accountHolderName: kycForm.accountHolderName,
-        bankName: kycForm.bankName,
-        accountNumber: kycForm.accountNumber,
-        ifsc: kycForm.ifsc,
-        panNumber: kycForm.panNumber,
-        upiId: kycForm.upiId,
-      });
-      setData((d) => ({ ...d, profile: res.data.student }));
-      setKycMsg({ type: 'success', text: 'KYC submitted! We\'ll verify it within 24-48 hours before your first payout.' });
-    } catch (err) {
-      setKycMsg({ type: 'error', text: err?.response?.data?.message || 'Could not submit KYC. Please check the details and try again.' });
-    } finally {
-      setKycSaving(false);
     }
   };
 
@@ -404,7 +360,7 @@ export default function StudentDashboard() {
                   <OutlineIcon name="shield" size={16} />
                   {kyc.status === 'pending'
                     ? 'Your KYC is under review - payouts unlock once it\'s verified.'
-                    : 'Add your bank/UPI details so we can pay out your referral earnings.'}
+                    : 'Add your bank details and ID documents so we can pay out your referral earnings.'}
                   <OutlineIcon name="arrow" size={14} />
                 </button>
               )}
@@ -454,59 +410,11 @@ export default function StudentDashboard() {
           {/* KYC */}
           {tab === 'kyc' && (
             <div className="mmc-dash-kyc-wrap">
-              <div className="card mmc-dash-kyc-card">
-                <div className="mmc-dash-kyc-head">
-                  <div>
-                    <h3><OutlineIcon name="shield" size={17} /> Payout KYC</h3>
-                    <p>These bank/UPI details are used only to pay out your referral earnings - required once before your first payout.</p>
-                  </div>
-                  <span className={`mmc-dash-kyc-status ${kycMeta.cls}`}>{kycMeta.label}</span>
-                </div>
-
-                {kyc.status === 'rejected' && kyc.rejectionReason && (
-                  <p className="mmc-dash-kyc-rejection"><OutlineIcon name="close" size={13} /> {kyc.rejectionReason} - please correct and resubmit.</p>
-                )}
-
-                <form onSubmit={saveKyc} className="mmc-dash-kyc-form">
-                  <div className="mmc-dash-form-grid">
-                    <div className="form-group">
-                      <label>Account Holder Name *</label>
-                      <input value={kycForm.accountHolderName} onChange={(e) => setKycForm({ ...kycForm, accountHolderName: e.target.value })} required />
-                    </div>
-                    <div className="form-group">
-                      <label>Bank Name *</label>
-                      <input value={kycForm.bankName} onChange={(e) => setKycForm({ ...kycForm, bankName: e.target.value })} required />
-                    </div>
-                    <div className="form-group">
-                      <label>Account Number *</label>
-                      <input value={kycForm.accountNumber} onChange={(e) => setKycForm({ ...kycForm, accountNumber: e.target.value })} required />
-                    </div>
-                    <div className="form-group">
-                      <label>Confirm Account Number *</label>
-                      <input value={kycForm.confirmAccountNumber} onChange={(e) => setKycForm({ ...kycForm, confirmAccountNumber: e.target.value })} required />
-                    </div>
-                    <div className="form-group">
-                      <label>IFSC Code *</label>
-                      <input value={kycForm.ifsc} onChange={(e) => setKycForm({ ...kycForm, ifsc: e.target.value.toUpperCase() })} placeholder="e.g. HDFC0001234" required />
-                    </div>
-                    <div className="form-group">
-                      <label>PAN Number *</label>
-                      <input value={kycForm.panNumber} onChange={(e) => setKycForm({ ...kycForm, panNumber: e.target.value.toUpperCase() })} placeholder="e.g. ABCDE1234F" required />
-                    </div>
-                    <div className="form-group">
-                      <label>UPI ID (optional)</label>
-                      <input value={kycForm.upiId} onChange={(e) => setKycForm({ ...kycForm, upiId: e.target.value })} placeholder="yourname@upi" />
-                    </div>
-                  </div>
-
-                  {kycMsg.text && <p className={kycMsg.type === 'error' ? 'mmc-dash-kyc-error' : 'mmc-success-msg'}>{kycMsg.text}</p>}
-
-                  <button className="btn btn-primary" disabled={kycSaving}>
-                    {kycSaving ? 'Submitting...' : kyc.status === 'not_submitted' ? 'Submit KYC' : 'Update & Resubmit'}
-                  </button>
-                  <p className="mmc-dash-kyc-note"><OutlineIcon name="shield" size={12} /> Your details are stored securely and used only for referral payouts.</p>
-                </form>
-              </div>
+              <KycSection
+                kyc={kyc}
+                meta={kycMeta}
+                onSubmitted={(updatedStudent) => setData((d) => ({ ...d, profile: updatedStudent }))}
+              />
             </div>
           )}
 

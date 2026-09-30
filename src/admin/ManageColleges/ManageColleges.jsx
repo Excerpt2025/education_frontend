@@ -1,14 +1,22 @@
 import React, { useEffect, useState } from 'react';
 import api, { getImageUrl } from '../../api/api.js';
 import AdminPagination from '../AdminPagination.jsx';
+import { COURSE_CATEGORIES } from '../../data/courseCategories.js';
 import '../AdminCommon.css';
 import './ManageColleges.css';
 
+// NEW: options for the College page "Area" and "Course Type" filters
+const AREA_OPTIONS = ['North', 'South', 'East', 'West', 'Central'];
+const COURSE_TYPE_OPTIONS = ['Full Time', 'Part Time', 'Online'];
+
 const emptyForm = {
   name: '', code: '', location: '', state: '', type: 'Private',
+  area: '',                 // NEW
+  courseTypes: ['Full Time'], // NEW
   establishedYear: '', affiliatedUniversity: '',
   about: '', description: '', rating: '', ranking: '',
   accreditations: '', specializations: '', facilities: '',
+  programs: [], // ticked programs, e.g. ['B.E.', 'MBA', 'PGDM']
   tuitionAnnual: '', totalCourse: '', applicationFee: '',
   highestPackage: '', averagePackage: '', placementPercentage: '', topRecruiters: '',
   hostelAvailable: false,
@@ -49,9 +57,12 @@ export default function ManageColleges() {
   const openEdit = (c) => {
     setForm({
       name: c.name || '', code: c.code || '', location: c.location || '', state: c.state || '', type: c.type || 'Private',
+      area: c.area || '', // NEW
+      courseTypes: Array.isArray(c.courseTypes) && c.courseTypes.length ? c.courseTypes : ['Full Time'], // NEW
       establishedYear: c.establishedYear || '', affiliatedUniversity: c.affiliatedUniversity || '',
       about: c.about || '', description: c.description || '', rating: c.rating || '', ranking: c.ranking || '',
       accreditations: toCommaList(c.accreditations), specializations: toCommaList(c.specializations), facilities: toCommaList(c.facilities),
+      programs: Array.isArray(c.programs) ? c.programs : [],
       tuitionAnnual: c.fees?.tuitionAnnual || c.fees?.annual || '', totalCourse: c.fees?.totalCourse || '', applicationFee: c.fees?.applicationFee || '',
       highestPackage: c.placements?.highestPackage || '', averagePackage: c.placements?.averagePackage || '',
       placementPercentage: c.placements?.placementPercentage || '', topRecruiters: toCommaList(c.placements?.topRecruiters),
@@ -68,6 +79,31 @@ export default function ManageColleges() {
     setShowModal(true);
   };
 
+  const toggleProgram = (label) => {
+    setForm((f) => ({
+      ...f,
+      programs: f.programs.includes(label) ? f.programs.filter((p) => p !== label) : [...f.programs, label],
+    }));
+  };
+
+  // NEW: tick / untick a course type (Full Time / Part Time / Online)
+  const toggleCourseType = (label) => {
+    setForm((f) => ({
+      ...f,
+      courseTypes: f.courseTypes.includes(label) ? f.courseTypes.filter((t) => t !== label) : [...f.courseTypes, label],
+    }));
+  };
+
+  // Tick / untick every program in one category
+  const toggleWholeCategory = (cat) => {
+    const labels = cat.programs.map((p) => p.label);
+    setForm((f) => {
+      const allOn = labels.every((l) => f.programs.includes(l));
+      const rest = f.programs.filter((p) => !labels.includes(p));
+      return { ...f, programs: allOn ? rest : [...rest, ...labels] };
+    });
+  };
+
   const save = async (e) => {
     e.preventDefault();
     setSaving(true); setError('');
@@ -78,6 +114,8 @@ export default function ManageColleges() {
       fd.append('location', form.location);
       fd.append('state', form.state);
       fd.append('type', form.type);
+      fd.append('area', form.area);                        // NEW
+      fd.append('courseTypes', form.courseTypes.join(', ')); // NEW
       if (form.establishedYear) fd.append('establishedYear', form.establishedYear);
       fd.append('affiliatedUniversity', form.affiliatedUniversity);
       fd.append('about', form.about);
@@ -87,6 +125,9 @@ export default function ManageColleges() {
       fd.append('accreditations', form.accreditations);
       fd.append('specializations', form.specializations);
       fd.append('facilities', form.facilities);
+      // Sent as a comma-separated string, same format as specializations
+      // (program labels contain no commas). Backend splits it - see server-changes.md
+      fd.append('programs', form.programs.join(', '));
       fd.append('fees', JSON.stringify({
         tuitionAnnual: Number(form.tuitionAnnual) || 0,
         totalCourse: Number(form.totalCourse) || 0,
@@ -153,22 +194,28 @@ export default function ManageColleges() {
             <table>
               <thead>
                 <tr>
-                  <th>College</th><th>Location</th><th>Type</th><th>Rating</th>
-                  <th>Highest Package</th><th>Hostel</th><th>Featured</th><th>Actions</th>
+                  <th>College</th><th>Location</th><th>Area</th><th>Type</th><th>Programs</th><th>Rating</th>
+                  <th>Highest Package</th><th>Hostel</th><th>Top Pick</th><th>Actions</th>
                 </tr>
               </thead>
               <tbody>
                 {colleges.map((c) => (
                   <tr key={c._id}>
                     <td className="mmc-mc-name-cell">
-                      <img src={getImageUrl(c.logo) || getImageUrl(c.image) || '/images/logo.png'} alt="" />
+                      <img
+                        src={getImageUrl(c.logo) || getImageUrl(c.image) || '/images/logo.png'}
+                        alt=""
+                        onError={(e) => { e.currentTarget.onerror = null; e.currentTarget.src = '/images/logo.png'; }}
+                      />
                       <div>
                         <strong>{c.name}</strong>
                         <span>{c.ranking ? `Rank #${c.ranking}` : '—'}</span>
                       </div>
                     </td>
                     <td>{c.location || '-'}</td>
+                    <td>{c.area || <em style={{ color: '#c56200' }}>Not set</em>}</td>
                     <td>{c.type}</td>
+                    <td>{c.programs?.length ? `${c.programs.length} selected` : <em style={{ color: '#c56200' }}>None</em>}</td>
                     <td>{c.rating ? `★ ${c.rating}` : '-'}</td>
                     <td>{c.placements?.highestPackage ? `₹${c.placements.highestPackage} LPA` : '-'}</td>
                     <td>{c.hostel?.available ? 'Yes' : 'No'}</td>
@@ -198,6 +245,14 @@ export default function ManageColleges() {
                   <div className="form-group"><label>College Name *</label><input value={form.name} onChange={set('name')} required /></div>
                   <div className="form-group"><label>Code</label><input value={form.code} onChange={set('code')} placeholder="e.g. RVCE" /></div>
                   <div className="form-group"><label>Location (City) *</label><input value={form.location} onChange={set('location')} required /></div>
+                  {/* NEW: Area of Bangalore, drives the "Area" filter */}
+                  <div className="form-group">
+                    <label>Area in Bangalore</label>
+                    <select value={form.area} onChange={set('area')}>
+                      <option value="">Not set / outside Bangalore</option>
+                      {AREA_OPTIONS.map((a) => <option key={a} value={a}>{a} Bangalore</option>)}
+                    </select>
+                  </div>
                   <div className="form-group"><label>State</label><input value={form.state} onChange={set('state')} /></div>
                   <div className="form-group">
                     <label>Type</label>
@@ -210,7 +265,19 @@ export default function ManageColleges() {
                   <div className="form-group"><label>Ranking (optional)</label><input type="number" value={form.ranking} onChange={set('ranking')} /></div>
                   <div className="form-group"><label>Rating (0-5)</label><input type="number" step="0.1" min="0" max="5" value={form.rating} onChange={set('rating')} /></div>
                   <div className="form-group mmc-mc-checkbox">
-                    <label><input type="checkbox" checked={form.featured} onChange={set('featured')} /> Show in "Top Picks" on the home page</label>
+                    <label><input type="checkbox" checked={form.featured} onChange={set('featured')} /> Show as a "Top Pick" (home page slider &amp; colleges page)</label>
+                  </div>
+                </div>
+                {/* NEW: Course Type, drives the "Course Type" filter */}
+                <div className="form-group">
+                  <label>Course Type (study modes offered)</label>
+                  <div className="mmc-mc-prog-list">
+                    {COURSE_TYPE_OPTIONS.map((t) => (
+                      <label key={t} className="mmc-mc-prog-item">
+                        <input type="checkbox" checked={form.courseTypes.includes(t)} onChange={() => toggleCourseType(t)} />
+                        {t}
+                      </label>
+                    ))}
                   </div>
                 </div>
                 <div className="form-group"><label>Short Description (shown on cards)</label><input value={form.description} onChange={set('description')} placeholder="One line summary" /></div>
@@ -218,9 +285,36 @@ export default function ManageColleges() {
               </fieldset>
 
               <fieldset className="mmc-mc-fieldset">
+                <legend>Programs Offered</legend>
+                <p className="mmc-mc-hint">
+                  Tick what this college offers. Students reach the college from the home page cards
+                  ("Choose your area of interest") and the course filters based on these ticks.
+                </p>
+                {COURSE_CATEGORIES.map((cat) => {
+                  const allOn = cat.programs.every((p) => form.programs.includes(p.label));
+                  return (
+                    <div className="mmc-mc-prog-group" key={cat.id}>
+                      <label className="mmc-mc-prog-title">
+                        <input type="checkbox" checked={allOn} onChange={() => toggleWholeCategory(cat)} />
+                        {cat.emoji} {cat.label}
+                      </label>
+                      <div className="mmc-mc-prog-list">
+                        {cat.programs.map((p) => (
+                          <label key={p.id} className="mmc-mc-prog-item">
+                            <input type="checkbox" checked={form.programs.includes(p.label)} onChange={() => toggleProgram(p.label)} />
+                            {p.label}
+                          </label>
+                        ))}
+                      </div>
+                    </div>
+                  );
+                })}
+              </fieldset>
+
+              <fieldset className="mmc-mc-fieldset">
                 <legend>Accreditation &amp; Specialization</legend>
                 <div className="form-group"><label>Accreditations (comma separated)</label><input value={form.accreditations} onChange={set('accreditations')} placeholder="NAAC A+, NBA Accredited, AICTE Approved" /></div>
-                <div className="form-group"><label>Specializations (comma separated)</label><input value={form.specializations} onChange={set('specializations')} placeholder="Marketing, Finance, HR, Operations" /></div>
+                <div className="form-group"><label>Specializations (comma separated)</label><input value={form.specializations} onChange={set('specializations')} placeholder="Computer Science, Marketing, Finance, HR" /></div>
                 <div className="form-group"><label>Facilities / Amenities (comma separated)</label><input value={form.facilities} onChange={set('facilities')} placeholder="Library, Labs, Sports Complex, Wi-Fi Campus" /></div>
               </fieldset>
 

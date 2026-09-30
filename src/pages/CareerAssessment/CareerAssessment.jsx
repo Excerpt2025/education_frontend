@@ -1,7 +1,7 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import api from '../../api/api.js';
-import { useAuth } from '../../context/AuthContext.jsx';
+import { useAuth } from '../../context/useAuth.js';
 import CareerReportCard from '../../components/CareerReportCard/CareerReportCard.jsx';
 import './CareerAssessment.css';
 import { loadRazorpayScript } from '../../utils/razorpay.js';
@@ -14,9 +14,11 @@ const SECTION_META = {
 };
 const SECTION_ORDER = ['interest', 'aptitude', 'personality', 'adaptive'];
 
-// Dev/demo only - lets you (or a client walkthrough) skip Razorpay entirely.
-// Controlled by an env flag so it can never accidentally ship live in production.
+// Dev/demo only - controlled by an env flag so it can never ship live in production.
 const ALLOW_DEV_SKIP_PAYMENT = import.meta.env.VITE_ALLOW_DEV_SKIP_PAYMENT === 'true';
+
+// How long the "selected" tick is shown before auto-advancing (ms)
+const ADVANCE_DELAY = 350;
 
 // Small just-in-case fallback if the admin question bank is ever completely empty.
 const FALLBACK_SECTIONS = {
@@ -60,9 +62,17 @@ export default function CareerAssessment() {
   const [selectedValues, setSelectedValues] = useState([]);
   const [current, setCurrent] = useState(0);
   const [answers, setAnswers] = useState({}); // { questionId: selectedOptionIndex }
+  const [direction, setDirection] = useState('forward'); // drives slide animation
   const [result, setResult] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+
+  // Refs so the delayed auto-advance never reads stale state, and so a
+  // double-tap can't skip two questions.
+  const answersRef = useRef({});
+  const lockRef = useRef(false);
+  const timerRef = useRef(null);
+  const finalAnswersRef = useRef(null); // kept so a failed submit can be retried
 
   useEffect(() => {
     if (!student) return;
@@ -72,6 +82,9 @@ export default function CareerAssessment() {
   useEffect(() => {
     api.get('/career-values').then((res) => setCareerValueOptions(res.data.values || [])).catch(() => {});
   }, []);
+
+  // Clear any pending auto-advance if the page is left
+  useEffect(() => () => clearTimeout(timerRef.current), []);
 
   const flatQuestions = useMemo(() => {
     if (!sections) return [];
@@ -84,7 +97,11 @@ export default function CareerAssessment() {
       const qRes = await api.get('/assessment/questions');
       const hasAny = SECTION_ORDER.some((cat) => qRes.data[cat]?.length);
       setSections(hasAny ? qRes.data : FALLBACK_SECTIONS);
+      answersRef.current = {};
+      setAnswers({});
       setCurrent(0);
+      setDirection('forward');
+      lockRef.current = false;
       setPhase('quiz');
     } catch {
       setError('Could not load the assessment. Please try again.');
@@ -146,9 +163,7 @@ export default function CareerAssessment() {
     }
   };
 
-  // Dev/demo shortcut - bypasses Razorpay entirely so the flow can be shown
-  // to a client without a real transaction. Only rendered when the
-  // VITE_ALLOW_DEV_SKIP_PAYMENT env flag is set (never in production).
+  // Dev/demo shortcut - only rendered when VITE_ALLOW_DEV_SKIP_PAYMENT is set.
   const skipPaymentDev = async () => {
     if (!student) { navigate('/login'); return; }
     setIsFree(true); setPaymentId(null);
@@ -163,18 +178,8 @@ export default function CareerAssessment() {
     });
   };
 
-  const selectOption = (idx) => {
-    const q = flatQuestions[current];
-    setAnswers((prev) => ({ ...prev, [q.id]: idx }));
-    // Auto-advance for a snappier, more interactive feel.
-    window.setTimeout(() => {
-      if (current < flatQuestions.length - 1) setCurrent((c) => c + 1);
-      else submit({ ...answers, [q.id]: idx });
-    }, 260);
-  };
-  const prevQuestion = () => setCurrent((c) => Math.max(0, c - 1));
-
-  const submit = async (finalAnswers) => {
+  const submit = useCallback(async (finalAnswers) => {
+    finalAnswersRef.current = finalAnswers;
     setLoading(true); setError('');
     try {
       const payload = {
@@ -189,13 +194,88 @@ export default function CareerAssessment() {
       setPhase('result');
     } catch (err) {
       setError(err.response?.data?.message || 'Could not submit assessment.');
+      lockRef.current = false;
     } finally {
       setLoading(false);
     }
-  };
+  }, [student, selectedValues, paymentId, isFree]);
+
+  const goTo = useCallback((index, dir) => {
+    setDirection(dir);
+    setCurrent(index);
+    lockRef.current = false;
+  }, []);
+
+  const selectOption = useCallback((idx) => {
+    if (lockRef.current) return;                 // ignore double taps during the advance delay
+    const q = flatQuestions[current];
+    if (!q) return;
+    lockRef.current = true;
+
+    const next = { ...answersRef.current, [q.id]: idx };
+    answersRef.current = next;
+    setAnswers(next);
+    setError('');
+
+    // Drop focus so no browser focus/active/hover style is carried to the next question
+    if (document.activeElement && document.activeElement.blur) document.activeElement.blur();
+
+    clearTimeout(timerRef.current);
+    timerRef.current = setTimeout(() => {
+      if (current < flatQuestions.length - 1) {
+        goTo(current + 1, 'forward');
+      } else {
+        submit(next);
+      }
+    }, ADVANCE_DELAY);
+  }, [current, flatQuestions, goTo, submit]);
+
+  const prevQuestion = useCallback(() => {
+    if (current === 0 || loading) return;
+    clearTimeout(timerRef.current);
+    goTo(current - 1, 'back');
+  }, [current, loading, goTo]);
+
+  // "Next" is only offered for questions already answered (after going back)
+  const nextQuestion = useCallback(() => {
+    if (loading) return;
+    const q = flatQuestions[current];
+    if (!q || answersRef.current[q.id] === undefined) return;
+    clearTimeout(timerRef.current);
+    if (current < flatQuestions.length - 1) goTo(current + 1, 'forward');
+    else submit(answersRef.current);
+  }, [current, flatQuestions, goTo, loading, submit]);
+
+  // Keyboard: 1-9 picks an option, ← goes back, → goes forward (if answered)
+  useEffect(() => {
+    if (phase !== 'quiz') return undefined;
+    const onKey = (e) => {
+      const q = flatQuestions[current];
+      if (!q) return;
+      if (e.key >= '1' && e.key <= '9') {
+        const idx = Number(e.key) - 1;
+        if (idx < q.options.length) selectOption(idx);
+      } else if (e.key === 'ArrowLeft') prevQuestion();
+      else if (e.key === 'ArrowRight') nextQuestion();
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [phase, flatQuestions, current, selectOption, prevQuestion, nextQuestion]);
 
   const currentQuestion = flatQuestions[current];
   const currentMeta = currentQuestion ? SECTION_META[currentQuestion.category] : null;
+  const answeredCount = Object.keys(answers).length;
+  const currentAnswer = currentQuestion ? answers[currentQuestion.id] : undefined;
+
+  // Per-section progress (e.g. "Aptitude 2/5") for the pills
+  const sectionProgress = useMemo(() => {
+    const out = {};
+    SECTION_ORDER.forEach((cat) => {
+      const qs = flatQuestions.filter((q) => q.category === cat);
+      out[cat] = { total: qs.length, done: qs.filter((q) => answers[q.id] !== undefined).length };
+    });
+    return out;
+  }, [flatQuestions, answers]);
 
   return (
     <div className="mmc-assessment-page mmc-assessment-page--lean">
@@ -261,34 +341,72 @@ export default function CareerAssessment() {
           {phase === 'quiz' && currentQuestion && (
             <div className="mmc-ca-quiz-card">
               <div className="mmc-ca-quiz-section-row">
-                {SECTION_ORDER.map((cat) => (
-                  <span key={cat} className={`mmc-ca-section-pill accent-${SECTION_META[cat].color}${cat === currentQuestion.category ? ' is-active' : ''}`}>
-                    {SECTION_META[cat].label}
+                {SECTION_ORDER.filter((cat) => sectionProgress[cat]?.total > 0).map((cat) => (
+                  <span
+                    key={cat}
+                    className={`mmc-ca-section-pill accent-${SECTION_META[cat].color}${cat === currentQuestion.category ? ' is-active' : ''}${sectionProgress[cat].done === sectionProgress[cat].total ? ' is-done' : ''}`}
+                  >
+                    {sectionProgress[cat].done === sectionProgress[cat].total ? '✓ ' : ''}{SECTION_META[cat].label}
+                    <small> {sectionProgress[cat].done}/{sectionProgress[cat].total}</small>
                   </span>
                 ))}
               </div>
               <div className="mmc-ca-quiz-progress">
-                <div className={`mmc-ca-quiz-progress-bar accent-${currentMeta.color}`} style={{ width: `${((current + 1) / flatQuestions.length) * 100}%` }} />
+                <div className={`mmc-ca-quiz-progress-bar accent-${currentMeta.color}`} style={{ width: `${(answeredCount / flatQuestions.length) * 100}%` }} />
               </div>
-              <p className="mono mmc-ca-quiz-counter">Question {current + 1} of {flatQuestions.length} · {currentMeta.label}</p>
-              <h3 key={currentQuestion.id} className="mmc-ca-quiz-question-anim">{currentQuestion.question}</h3>
-              <div className="mmc-ca-quiz-options">
-                {currentQuestion.options.map((opt, idx) => (
-                  <button
-                    key={idx}
-                    className={`mmc-ca-quiz-option ${answers[currentQuestion.id] === idx ? 'selected' : ''}`}
-                    onClick={() => selectOption(idx)}
-                    type="button"
-                  >
-                    {opt.label}
-                  </button>
-                ))}
+              <p className="mono mmc-ca-quiz-counter">
+                Question {current + 1} of {flatQuestions.length} · {currentMeta.label}
+              </p>
+
+              {/*
+                KEY FIX: everything that depends on the question is keyed by the
+                question id. React now tears down and rebuilds the option buttons
+                for every new question, so no button can carry over the
+                hover/focus/selected look of the previous question.
+              */}
+              <div key={currentQuestion.id} className={`mmc-ca-quiz-slide slide-${direction}`}>
+                <h3 className="mmc-ca-quiz-question-anim">{currentQuestion.question}</h3>
+                <div className="mmc-ca-quiz-options" role="radiogroup" aria-label={currentQuestion.question}>
+                  {currentQuestion.options.map((opt, idx) => {
+                    const isSelected = currentAnswer === idx;
+                    return (
+                      <button
+                        key={`${currentQuestion.id}-${idx}`}
+                        className={`mmc-ca-quiz-option ${isSelected ? 'selected' : ''}`}
+                        onClick={() => selectOption(idx)}
+                        type="button"
+                        role="radio"
+                        aria-checked={isSelected}
+                        disabled={loading}
+                      >
+                        <span className="mmc-ca-quiz-option-key">{idx + 1}</span>
+                        <span className="mmc-ca-quiz-option-label">{opt.label}</span>
+                        {isSelected && <span className="mmc-ca-quiz-option-tick" aria-hidden="true">✓</span>}
+                      </button>
+                    );
+                  })}
+                </div>
               </div>
+
               {loading && <p className="mmc-ca-quiz-loading">Generating your report...</p>}
-              {error && <p className="mmc-ca-error">{error}</p>}
+              {error && (
+                <div className="mmc-ca-error">
+                  <p>{error}</p>
+                  {current === flatQuestions.length - 1 && finalAnswersRef.current && (
+                    <button className="btn-outline" type="button" onClick={() => submit(finalAnswersRef.current)}>Try again</button>
+                  )}
+                </div>
+              )}
+
               <div className="mmc-ca-quiz-nav">
-                <button className="btn-outline" onClick={prevQuestion} disabled={current === 0} type="button">← Previous</button>
+                <button className="btn-outline" onClick={prevQuestion} disabled={current === 0 || loading} type="button">← Previous</button>
+                {currentAnswer !== undefined && !loading && (
+                  <button className="btn-outline" onClick={nextQuestion} type="button">
+                    {current === flatQuestions.length - 1 ? 'Finish →' : 'Next →'}
+                  </button>
+                )}
               </div>
+              <p className="mmc-ca-quiz-hint">Tip: press 1–{currentQuestion.options.length} to answer, ← → to move.</p>
             </div>
           )}
 

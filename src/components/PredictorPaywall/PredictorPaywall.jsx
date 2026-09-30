@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../../api/api.js';
 import { loadRazorpayScript } from '../../utils/razorpay.js';
-import { useAuth } from '../../context/AuthContext.jsx';
+import { useAuth } from '../../context/useAuth.js';;
 import './PredictorPaywall.css';
 
 // Dev/demo only - see the matching server-side ALLOW_DEV_SKIP_PAYMENT flag.

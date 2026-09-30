@@ -514,3 +514,90 @@ body:has(.mmc-col-sticky-bar) .mmc-public-main {
   margin: 0 0 14px;
   color: #5a6472;
 }
+
+.mmc-col-programs { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; padding: 12px 14px; background: #f3f8fd; border-radius: 12px; }
+.mmc-col-program { padding: 6px 14px; border-radius: 999px; border: 1px solid #cfe0f0; background: #fff; color: #0f2a4a; font-size: .85rem; cursor: pointer; }
+.mmc-col-program:hover { border-color: #0174cc; }
+.mmc-col-program.is-active { background: #0174cc; border-color: #0174cc; color: #fff; }
+
+
+
+
+
+
+
+/* ============================================================
+   Filter drawer - APPEND to the bottom of Colleges.css
+   (You can delete the old .mmc-col-filters / .mmc-col-filters-inner
+   / .mmc-col-reset rules, they're no longer used.)
+   ============================================================ */
+.mmc-fd-root { position: fixed; inset: 0; z-index: 1200; display: flex; justify-content: flex-end; }
+.mmc-fd-overlay { position: absolute; inset: 0; background: rgba(15, 23, 42, 0.45); }
+.mmc-fd-panel {
+  position: relative; width: min(100%, 400px); height: 100%; background: #fff;
+  display: flex; flex-direction: column; box-shadow: -8px 0 30px rgba(0, 0, 0, 0.15);
+  animation: mmc-fd-in 0.22s ease-out;
+}
+@keyframes mmc-fd-in { from { transform: translateX(24px); opacity: 0; } to { transform: none; opacity: 1; } }
+@media (prefers-reduced-motion: reduce) { .mmc-fd-panel { animation: none; } }
+
+.mmc-fd-head { display: flex; align-items: center; justify-content: space-between; padding: 16px 20px; border-bottom: 1px solid #e5e7eb; }
+.mmc-fd-head h2 { margin: 0; font-size: 18px; }
+.mmc-fd-close { border: 0; background: #f3f4f6; width: 34px; height: 34px; border-radius: 50%; cursor: pointer; display: grid; place-items: center; }
+
+.mmc-fd-body { flex: 1; overflow-y: auto; padding: 4px 20px 24px; }
+.mmc-fd-section { padding: 18px 0; border-bottom: 1px solid #eef0f3; }
+.mmc-fd-section:last-child { border-bottom: 0; }
+.mmc-fd-section h3 { margin: 0 0 12px; font-size: 16px; color: #1f2937; }
+
+.mmc-fd-chips { display: flex; flex-wrap: wrap; gap: 10px; }
+.mmc-fd-chip {
+  border: 1px solid #d1d5db; background: #fff; color: #374151; border-radius: 10px;
+  padding: 9px 14px; font-size: 15px; cursor: pointer; display: inline-flex; gap: 8px; align-items: center;
+}
+.mmc-fd-chip.is-active { border-color: #0174cc; background: #e8f3fd; color: #0174cc; font-weight: 600; }
+
+.mmc-fd-field { display: block; margin-bottom: 14px; }
+.mmc-fd-field span { display: block; font-size: 14px; font-weight: 600; color: #374151; margin-bottom: 6px; }
+.mmc-fd-field select {
+  width: 100%; padding: 11px 12px; border: 1px solid #d1d5db; border-radius: 8px; background: #fff; font-size: 15px;
+}
+.mmc-fd-field select:focus { outline: 2px solid #0174cc; outline-offset: 0; border-color: #0174cc; }
+.mmc-fd-field select:disabled { background: #f3f4f6; color: #9ca3af; cursor: not-allowed; }
+
+.mmc-fd-slider { padding: 0 6px; }
+.mmc-fd-slider-labels { display: flex; justify-content: space-between; font-size: 14px; color: #374151; margin-bottom: 8px; }
+.mmc-fd-slider-track { position: relative; height: 28px; }
+.mmc-fd-slider-track::before { content: ''; position: absolute; left: 0; right: 0; top: 12px; height: 4px; border-radius: 4px; background: #dbeafe; }
+.mmc-fd-slider-fill { position: absolute; top: 12px; height: 4px; border-radius: 4px; background: #0174cc; }
+.mmc-fd-slider-track input[type='range'] {
+  position: absolute; left: 0; width: 100%; top: 0; height: 28px; margin: 0;
+  background: none; pointer-events: none; -webkit-appearance: none; appearance: none;
+}
+.mmc-fd-slider-track input[type='range']::-webkit-slider-thumb {
+  -webkit-appearance: none; pointer-events: auto; width: 22px; height: 22px; border-radius: 50%;
+  background: #fff; border: 3px solid #0174cc; cursor: pointer;
+}
+.mmc-fd-slider-track input[type='range']::-moz-range-thumb {
+  pointer-events: auto; width: 16px; height: 16px; border-radius: 50%; background: #fff; border: 3px solid #0174cc; cursor: pointer;
+}
+.mmc-fd-slider-track input[type='range']::-webkit-slider-runnable-track { background: transparent; }
+.mmc-fd-slider-track input[type='range']::-moz-range-track { background: transparent; }
+.mmc-fd-slider-track input[type='range']:focus-visible::-webkit-slider-thumb { outline: 2px solid #f57c00; outline-offset: 2px; }
+
+.mmc-fd-budget-inputs { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-top: 14px; }
+.mmc-fd-budget-inputs span { display: block; font-size: 14px; font-weight: 600; margin-bottom: 6px; }
+.mmc-fd-budget-inputs input { width: 100%; padding: 11px 12px; border: 1px solid #d1d5db; border-radius: 8px; font-size: 15px; }
+.mmc-fd-hint { margin: 10px 0 0; font-size: 12.5px; color: #6b7280; }
+
+.mmc-fd-foot {
+  display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  padding: 12px 20px calc(12px + env(safe-area-inset-bottom, 0px)); border-top: 1px solid #e5e7eb; background: #fff;
+}
+.mmc-fd-clear { border: 0; background: none; color: #6b7280; font-size: 16px; cursor: pointer; padding: 10px 14px; }
+.mmc-fd-apply { border: 0; background: #0174cc; color: #fff; font-size: 16px; font-weight: 600; padding: 12px 26px; border-radius: 10px; cursor: pointer; }
+.mmc-fd-apply:hover { background: #015fa8; }
+
+@media (max-width: 520px) {
+  .mmc-fd-panel { width: 100%; }
+}

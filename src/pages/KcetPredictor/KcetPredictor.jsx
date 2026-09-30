@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api, { getImageUrl } from '../../api/api.js';
-import { useAuth } from '../../context/AuthContext.jsx';
+import { useAuth } from '../../context/useAuth.js';
 import PredictorPaywall from '../../components/PredictorPaywall/PredictorPaywall.jsx';
 import './KcetPredictor.css';
 

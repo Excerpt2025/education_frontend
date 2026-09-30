@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { NavLink, useNavigate, useLocation, Outlet } from 'react-router-dom';
-import { useAdminAuth } from '../../context/AdminAuthContext.jsx';
+// import { useAdminAuth } from '../../context/AdminAuthContext.jsx';
+import { useAdminAuth } from '../../context/useAdminAuth';
 import './AdminLayout.css';
 
 const NAV_GROUPS = [
@@ -36,6 +37,13 @@ const NAV_GROUPS = [
     items: [
       { to: '/admin/kcet-data', label: '📥 KCET Cutoff Data' },
       { to: '/admin/pgcet-data', label: '📥 PGCET Cutoff Data' },
+    ],
+  },
+  {
+    label: 'Kyc',
+    items: [
+      { to: '/admin/kyc', label: '📥 KYC' },
+     
     ],
   },
   {

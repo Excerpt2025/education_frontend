@@ -53,6 +53,8 @@ import ManagePages from './admin/ManagePages/ManagePages.jsx';
 import Reports from './admin/Reports/Reports.jsx';
 import AdminSettings from './admin/AdminSettings/AdminSettings.jsx';
 import ManagePredictorLeads from './admin/ManagePredictorLeads/ManagePredictorLeads.jsx';
+import ManageKyc from './admin/Managekyc/ManageKyc.jsx';
+
 
 // Layout wrapper for all public-facing pages (Navbar + Footer)
 function PublicLayout({ children }) {
@@ -115,9 +117,11 @@ export default function App() {
               <Route path="college-interest" element={<ManageCollegeInterest />} />
               <Route path="kcet-data" element={<ManageKcetData />} />
               <Route path="pgcet-data" element={<ManagePgcetData />} />
+              <Route path="kyc" element={<ManageKyc />} />
               <Route path="predictor-leads" element={<ManagePredictorLeads />} />
               <Route path="colleges" element={<ManageColleges />} />
               <Route path="courses" element={<ManageCourses />} />
+              
               <Route path="sliders" element={<ManageSlider />} />
               <Route path="pages" element={<ManagePages />} />
               <Route path="reports" element={<Reports />} />

@@ -1,26 +1,32 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import api, { getImageUrl } from '../../api/api.js';
 import OutlineIcon from '../../components/icons/OutlineIcon.jsx';
 import CollegeInterestModal from '../../components/CollegeInterestModal/CollegeInterestModal.jsx';
 import { MOCK_COLLEGES } from '../../data/collegeMocks.js';
+import {
+  COURSE_CATEGORIES,
+  getCategory,
+  matchesCategory,
+  categoryCounts,
+  courseHaystack,
+  courseLabels,
+} from '../../data/courseCategories.js';
 import './Colleges.css';
 
 /* ============================================================================
- *  ONE college hub page - replaces the old "College10Plus" home widget,
- *  the standalone "CollegeCompare" page and the generic "CollegeCard".
- *  Everything a student needs lives here: search, filter chips (course /
- *  location / budget / rating), a rich result grid, and an inline
- *  side-by-side compare table for up to 4 colleges - all in one file.
+ *  ONE college hub page: search, filters, result grid, inline compare.
+ *
+ *  Filters (Shiksha-style drawer, applied with "Apply Filter"):
+ *    - Course Type   : Full Time / Part Time / Online
+ *    - Specialization: Stream > Degree > Course > Specialization (cascading)
+ *    - Budget        : dual slider + From/To inputs (annual fee)
+ *    - Area          : Bangalore North / South / East / West / Central
+ *    - More          : college type, location, rating
+ *
+ *  Stream + Course (program) still live in the URL so Home page cards can
+ *  deep link:  /colleges?category=engineering&program=be
  * ==========================================================================*/
-
-const BUDGET_OPTIONS = [
-  { id: '', label: 'Any budget' },
-  { id: 'lt1', label: 'Under ₹1L', max: 100000 },
-  { id: 'lt3', label: 'Under ₹3L', max: 300000 },
-  { id: 'lt5', label: 'Under ₹5L', max: 500000 },
-  { id: 'lt7', label: 'Under ₹7L', max: 700000 },
-];
 
 const RATING_OPTIONS = [
   { id: '', label: 'Any rating' },
@@ -36,43 +42,33 @@ const SORT_OPTIONS = [
   { id: 'fees-desc', label: 'Fees: High to Low' },
 ];
 
-/* ---------------------------------------------------------------------------
- *  COURSE FILTER
- *  Admins type courses in different ways ("B.E", "BE Computer Science",
- *  "Bachelor of Engineering", "Engineering"), and many colleges only have
- *  Specializations filled in rather than linked Course records. So each chip
- *  below is a *group* of keywords, matched against course names AND
- *  specializations. Add a new group here and it shows up in the tab strip
- *  automatically - no other change needed.
- * ------------------------------------------------------------------------*/
-const COURSE_GROUPS = [
-  { id: 'engineering', label: 'Engineering', keywords: ['engineering', 'b.e', 'be', 'b.tech', 'btech', 'b tech', 'bachelor of engineering', 'bachelor of technology'] },
-  { id: 'mtech', label: 'M.Tech / M.E', keywords: ['m.tech', 'mtech', 'm tech', 'm.e', 'master of technology', 'master of engineering'] },
-  { id: 'mba', label: 'MBA', keywords: ['mba', 'pgdm', 'master of business administration'] },
-  { id: 'bba', label: 'BBA', keywords: ['bba', 'bbm', 'bachelor of business administration'] },
-  { id: 'mca', label: 'MCA', keywords: ['mca', 'master of computer applications'] },
-  { id: 'bca', label: 'BCA', keywords: ['bca', 'bachelor of computer applications'] },
-  { id: 'bsc', label: 'B.Sc', keywords: ['b.sc', 'bsc', 'b sc', 'bachelor of science'] },
-  { id: 'msc', label: 'M.Sc', keywords: ['m.sc', 'msc', 'm sc', 'master of science'] },
-  { id: 'bcom', label: 'B.Com', keywords: ['b.com', 'bcom', 'b com', 'bachelor of commerce'] },
-  { id: 'mcom', label: 'M.Com', keywords: ['m.com', 'mcom', 'master of commerce'] },
-  { id: 'ba', label: 'BA / Arts', keywords: ['b.a', 'ba', 'bachelor of arts', 'arts', 'humanities'] },
-  { id: 'law', label: 'Law', keywords: ['llb', 'll.b', 'llm', 'law', 'ba llb', 'bba llb'] },
-  { id: 'medical', label: 'Medical', keywords: ['mbbs', 'md', 'bds', 'bams', 'bhms', 'medicine', 'medical'] },
-  { id: 'nursing', label: 'Nursing', keywords: ['nursing', 'b.sc nursing', 'gnm', 'anm'] },
-  { id: 'paramedical', label: 'Paramedical', keywords: ['paramedical', 'physiotherapy', 'bpt', 'lab technology', 'radiology', 'optometry'] },
-  { id: 'pharmacy', label: 'Pharmacy', keywords: ['pharmacy', 'b.pharm', 'bpharm', 'd.pharm', 'pharm.d', 'pharmd'] },
-  { id: 'design', label: 'Design', keywords: ['design', 'b.des', 'bdes', 'fashion', 'interior', 'animation', 'fine arts', 'bfa'] },
-  { id: 'architecture', label: 'Architecture', keywords: ['architecture', 'b.arch', 'barch', 'm.arch'] },
-  { id: 'hotel', label: 'Hotel Management', keywords: ['hotel management', 'hospitality', 'bhm', 'culinary'] },
-  { id: 'agriculture', label: 'Agriculture', keywords: ['agriculture', 'b.sc agri', 'horticulture', 'veterinary'] },
-  { id: 'diploma', label: 'Diploma', keywords: ['diploma', 'polytechnic'] },
-  { id: 'phd', label: 'Ph.D / Research', keywords: ['ph.d', 'phd', 'doctorate', 'research'] },
+const COURSE_TYPES = ['Full Time', 'Part Time', 'Online'];
+const AREA_OPTIONS = ['North', 'South', 'East', 'West', 'Central'];
+const DEGREE_OPTIONS = [
+  { id: 'UG', label: 'Under Graduate' },
+  { id: 'PG', label: 'Post Graduate' },
+  { id: 'Diploma', label: 'Diploma' },
 ];
 
-const EMPTY_FILTERS = { location: '', type: '', budget: '', rating: '', specialization: '' };
-const MAX_COMPARE = 4;
+const BUDGET_MIN = 10000;      // 10 k
+const BUDGET_MAX = 50000000;   // 5.00 Cr
 
+const EMPTY_FILTERS = {
+  location: '',
+  type: '',
+  rating: '',
+  specialization: '',
+  degree: '',
+  courseTypes: [],
+  areas: [],
+  budgetMin: BUDGET_MIN,
+  budgetMax: BUDGET_MAX,
+};
+
+const MAX_COMPARE = 4;
+const PLACEHOLDER = '/images/college-placeholder.jpg';
+
+/* ---------- small helpers ---------- */
 function annualFee(college) {
   const n = Number(college.fees?.tuitionAnnual ?? college.fees?.annual);
   return Number.isFinite(n) && n > 0 ? n : null;
@@ -88,37 +84,54 @@ function formatLPA(n) {
   if (!Number.isFinite(num) || num <= 0) return null;
   return `₹${num} LPA`;
 }
-
-/* Course names, falling back to specializations - the field admins actually
- * fill in most often in Manage Colleges. */
-function courseLabels(college) {
-  const fromCourses = (college.coursesOffered || [])
-    .map((c) => (typeof c === 'string' ? c : c?.name))
-    .filter(Boolean);
-  if (fromCourses.length) return fromCourses;
-  return (college.specializations || []).filter(Boolean);
+function budgetLabel(n) {
+  if (n >= 10000000) return `${(n / 10000000).toFixed(2)} Cr`;
+  if (n >= 100000) return `${(n / 100000).toFixed(n % 100000 === 0 ? 0 : 1)} L`;
+  return `${Math.round(n / 1000)} k`;
+}
+// Slider works on a log scale (0-100) because 10k -> 5Cr is a huge range.
+const LOG_SPAN = Math.log(BUDGET_MAX / BUDGET_MIN);
+function sliderToBudget(p) {
+  const raw = BUDGET_MIN * Math.exp((LOG_SPAN * p) / 100);
+  if (p >= 100) return BUDGET_MAX;
+  const step = raw >= 1000000 ? 100000 : raw >= 100000 ? 10000 : 1000;
+  return Math.max(BUDGET_MIN, Math.round(raw / step) * step);
+}
+function budgetToSlider(v) {
+  const clamped = Math.min(Math.max(Number(v) || BUDGET_MIN, BUDGET_MIN), BUDGET_MAX);
+  return (Math.log(clamped / BUDGET_MIN) / LOG_SPAN) * 100;
 }
 
-function courseHaystack(college) {
-  const courses = (college.coursesOffered || [])
-    .map((c) => (typeof c === 'string' ? c : `${c?.name || ''} ${c?.level || ''}`))
-    .join(' | ');
-  return `${courses} | ${(college.specializations || []).join(' | ')}`.toLowerCase();
+// Area: use the admin-entered `area` field; for older records fall back to
+// spotting "north/south/east/west/central" in the location text.
+function collegeArea(c) {
+  if (c.area) return c.area;
+  const m = String(c.location || '').match(/\b(north|south|east|west|central)\b/i);
+  return m ? m[1][0].toUpperCase() + m[1].slice(1).toLowerCase() : '';
 }
 
-/* Whole-word-ish match so "ba" doesn't match "Urban Planning" and
- * "be" doesn't match "Best". Dots in "b.e" are escaped. */
-function keywordMatches(haystack, keyword) {
-  const escaped = keyword.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-  return new RegExp(`(^|[^a-z0-9])${escaped}([^a-z0-9]|$)`, 'i').test(haystack);
+// Degree level(s) a college offers: linked Course docs first, then a keyword
+// scan of programs / course names for colleges that only have text data.
+const UG_RE = /(^|[^a-z])(b\.?e|b\.?tech|bca|bba|b\.?com|b\.?sc|b\.?arch|b\.?des|mbbs|llb|ba)(?![a-z])/;
+const PG_RE = /(^|[^a-z])(m\.?e|m\.?tech|mba|mca|pgdm|m\.?sc|m\.?com|m\.?arch|ma)(?![a-z])/;
+function collegeLevels(c) {
+  const set = new Set();
+  (c.coursesOffered || []).forEach((x) => x?.level && set.add(x.level));
+  const text = [...(c.programs || []), ...(c.coursesOffered || []).map((x) => x?.name || '')].join(' ').toLowerCase();
+  if (UG_RE.test(text)) set.add('UG');
+  if (PG_RE.test(text)) set.add('PG');
+  if (/diploma/.test(text)) set.add('Diploma');
+  return set;
 }
 
-function matchesCourseGroup(college, groupId) {
-  if (!groupId) return true;
-  const group = COURSE_GROUPS.find((g) => g.id === groupId);
-  if (!group) return true;
-  const hay = courseHaystack(college);
-  return group.keywords.some((k) => keywordMatches(hay, k));
+// Colleges with no course-type data are treated as Full Time.
+function collegeCourseTypes(c) {
+  return Array.isArray(c.courseTypes) && c.courseTypes.length ? c.courseTypes : ['Full Time'];
+}
+
+function imgFallback(e) {
+  e.currentTarget.onerror = null;
+  e.currentTarget.src = PLACEHOLDER;
 }
 
 async function fetchAllColleges() {
@@ -134,20 +147,40 @@ async function fetchAllColleges() {
 
 export default function Colleges() {
   const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  // Category (stream) + program (course) come from the URL (single source of truth).
+  const rawCategory = searchParams.get('category') || '';
+  const courseGroup = getCategory(rawCategory) ? rawCategory : '';
+  const rawProgram = searchParams.get('program') || '';
+  const program = courseGroup && getCategory(courseGroup).programs.some((p) => p.id === rawProgram) ? rawProgram : '';
+
+  const setCategory = (id) => {
+    const next = new URLSearchParams(searchParams);
+    next.delete('program');
+    if (id) next.set('category', id); else next.delete('category');
+    setSearchParams(next, { replace: true });
+  };
+  const setProgram = (id) => {
+    const next = new URLSearchParams(searchParams);
+    if (id) next.set('program', id); else next.delete('program');
+    setSearchParams(next, { replace: true });
+  };
+
   const [colleges, setColleges] = useState(MOCK_COLLEGES);
   const [status, setStatus] = useState('loading');
   const [query, setQuery] = useState('');
   const [search, setSearch] = useState('');
-  const [courseGroup, setCourseGroup] = useState(''); // '' = All courses
   const [filters, setFilters] = useState(EMPTY_FILTERS);
   const [sort, setSort] = useState('ranking');
   const [filterOpen, setFilterOpen] = useState(false);
+  const [draft, setDraft] = useState({ ...EMPTY_FILTERS, category: '', program: '' });
   const [visibleCount, setVisibleCount] = useState(9);
 
-  const [selected, setSelected] = useState([]); // array of college objects picked for compare
+  const [selected, setSelected] = useState([]);
   const [compareData, setCompareData] = useState(null);
   const [compareLoading, setCompareLoading] = useState(false);
-  const [pendingAction, setPendingAction] = useState(null); // { type: 'view'|'compare', college? }
+  const [pendingAction, setPendingAction] = useState(null);
   const compareSectionRef = useRef(null);
 
   useEffect(() => {
@@ -163,53 +196,46 @@ export default function Colleges() {
     return () => window.clearTimeout(t);
   }, [query]);
 
-  // Reset paging whenever the result set changes, so "Show more" doesn't
-  // leave the user scrolled past the end of a smaller list.
-  useEffect(() => { setVisibleCount(9); }, [courseGroup, filters, search, sort]);
+  useEffect(() => { setVisibleCount(9); }, [courseGroup, program, filters, search, sort]);
 
-  /* Only show course chips that at least one college actually offers, with a
-   * count beside each - a filter that returns nothing is worse than no filter. */
-  const courseTabs = useMemo(() => {
-    const counts = new Map();
-    colleges.forEach((c) => {
-      const hay = courseHaystack(c);
-      COURSE_GROUPS.forEach((g) => {
-        if (g.keywords.some((k) => keywordMatches(hay, k))) {
-          counts.set(g.id, (counts.get(g.id) || 0) + 1);
-        }
-      });
-    });
-    const available = COURSE_GROUPS
-      .filter((g) => counts.get(g.id))
-      .map((g) => ({ ...g, count: counts.get(g.id) }));
-    // Before any real data is loaded, still show the main streams so the strip
-    // never renders as a lonely "All courses" chip.
-    if (!available.length) {
-      return COURSE_GROUPS.filter((g) => ['engineering', 'mba', 'mca', 'bca', 'bba', 'bsc', 'bcom'].includes(g.id))
-        .map((g) => ({ ...g, count: 0 }));
-    }
-    return available;
-  }, [colleges]);
+  useEffect(() => { window.scrollTo({ top: 0 }); }, []);
 
-  const specializations = useMemo(() => {
-    const set = new Set();
-    colleges.forEach((c) => (c.specializations || []).forEach((s) => s && set.add(s)));
-    return [...set].sort();
-  }, [colleges]);
+  // Lock page scroll while the filter drawer is open.
+  useEffect(() => {
+    document.body.style.overflow = filterOpen ? 'hidden' : '';
+    return () => { document.body.style.overflow = ''; };
+  }, [filterOpen]);
+
+  const counts = useMemo(() => categoryCounts(colleges), [colleges]);
+  const activeCategory = getCategory(courseGroup);
 
   const locations = useMemo(() => [...new Set(colleges.map((c) => c.location).filter(Boolean))].sort(), [colleges]);
   const types = useMemo(() => [...new Set(colleges.map((c) => c.type).filter(Boolean))], [colleges]);
 
+  // Specialization options follow the stream picked in the drawer (draft).
+  const draftCategory = getCategory(draft.category);
+  const draftSpecializations = useMemo(() => {
+    const set = new Set();
+    colleges
+      .filter((c) => matchesCategory(c, draft.category, ''))
+      .forEach((c) => (c.specializations || []).forEach((s) => s && set.add(s)));
+    return [...set].sort();
+  }, [colleges, draft.category]);
+
+  const budgetActive = filters.budgetMin > BUDGET_MIN || filters.budgetMax < BUDGET_MAX;
+
   const filtered = useMemo(() => {
     return colleges.filter((c) => {
-      if (!matchesCourseGroup(c, courseGroup)) return false;
+      if (!matchesCategory(c, courseGroup, program)) return false;
       if (filters.specialization && !(c.specializations || []).some((s) => s.toLowerCase() === filters.specialization.toLowerCase())) return false;
+      if (filters.degree && !collegeLevels(c).has(filters.degree)) return false;
+      if (filters.courseTypes.length && !collegeCourseTypes(c).some((t) => filters.courseTypes.includes(t))) return false;
+      if (filters.areas.length && !filters.areas.includes(collegeArea(c))) return false;
       if (filters.location && c.location !== filters.location) return false;
       if (filters.type && c.type !== filters.type) return false;
-      if (filters.budget) {
-        const opt = BUDGET_OPTIONS.find((o) => o.id === filters.budget);
+      if (budgetActive) {
         const fee = annualFee(c);
-        if (opt?.max && (!fee || fee >= opt.max)) return false;
+        if (!fee || fee < filters.budgetMin || fee > filters.budgetMax) return false;
       }
       if (filters.rating) {
         const min = Number(filters.rating);
@@ -221,7 +247,7 @@ export default function Colleges() {
       }
       return true;
     });
-  }, [colleges, courseGroup, filters, search]);
+  }, [colleges, courseGroup, program, filters, budgetActive, search]);
 
   const sorted = useMemo(() => {
     const list = [...filtered];
@@ -236,8 +262,48 @@ export default function Colleges() {
 
   const shown = sorted.slice(0, visibleCount);
   const featured = useMemo(() => colleges.filter((c) => c.featured).slice(0, 8), [colleges]);
-  const filterCount = Object.values(filters).filter(Boolean).length;
-  const activeCourseLabel = COURSE_GROUPS.find((g) => g.id === courseGroup)?.label || '';
+
+  // Badge count on the Filters button = every active filter incl. stream/course.
+  const filterCount =
+    (courseGroup ? 1 : 0) + (program ? 1 : 0) +
+    (filters.specialization ? 1 : 0) + (filters.degree ? 1 : 0) +
+    filters.courseTypes.length + filters.areas.length +
+    (filters.location ? 1 : 0) + (filters.type ? 1 : 0) + (filters.rating ? 1 : 0) +
+    (budgetActive ? 1 : 0);
+
+  const activeLabel = program
+    ? activeCategory?.programs.find((p) => p.id === program)?.label
+    : activeCategory?.label || '';
+
+  /* ---------- filter drawer ---------- */
+  const openFilters = () => {
+    setDraft({ ...filters, category: courseGroup, program });
+    setFilterOpen(true);
+  };
+  const patchDraft = (patch) => setDraft((d) => ({ ...d, ...patch }));
+  const toggleDraftList = (key, value) => setDraft((d) => ({
+    ...d,
+    [key]: d[key].includes(value) ? d[key].filter((v) => v !== value) : [...d[key], value],
+  }));
+
+  const applyFilters = () => {
+    const min = Math.min(Math.max(Number(draft.budgetMin) || BUDGET_MIN, BUDGET_MIN), BUDGET_MAX);
+    const max = Math.min(Math.max(Number(draft.budgetMax) || BUDGET_MAX, BUDGET_MIN), BUDGET_MAX);
+    const { category, program: prog, ...rest } = draft;
+    setFilters({ ...rest, budgetMin: Math.min(min, max), budgetMax: Math.max(min, max) });
+    const next = new URLSearchParams(searchParams);
+    if (category) next.set('category', category); else next.delete('category');
+    if (category && prog) next.set('program', prog); else next.delete('program');
+    setSearchParams(next, { replace: true });
+    setFilterOpen(false);
+  };
+
+  const clearEverything = () => {
+    setSearchParams({}, { replace: true });
+    setFilters(EMPTY_FILTERS);
+    setDraft({ ...EMPTY_FILTERS, category: '', program: '' });
+    setQuery('');
+  };
 
   const alreadyUnlocked = () => sessionStorage.getItem('mmc_interest_submitted');
 
@@ -287,12 +353,6 @@ export default function Colleges() {
     setCompareData((prev) => (prev ? prev.filter((c) => c._id !== id) : prev));
   };
 
-  const clearEverything = () => {
-    setCourseGroup('');
-    setFilters(EMPTY_FILTERS);
-    setQuery('');
-  };
-
   return (
     <div className="mmc-colleges-page">
       {/* HERO */}
@@ -338,7 +398,7 @@ export default function Colleges() {
                 const courses = courseLabels(c);
                 return (
                   <button key={c._id} type="button" className="mmc-col-pick-card" onClick={() => viewDetails(c)}>
-                    <img src={getImageUrl(c.logo) || getImageUrl(c.image) || '/images/logo.png'} alt="" />
+                    <img src={getImageUrl(c.logo) || getImageUrl(c.image) || '/images/logo.png'} alt="" onError={imgFallback} />
                     <div>
                       <strong>{c.name}</strong>
                       <small><OutlineIcon name="pin" size={12} /> {c.location || 'Karnataka'}</small>
@@ -352,32 +412,54 @@ export default function Colleges() {
         </section>
       )}
 
-      {/* COURSE TABS */}
+      {/* COURSE CATEGORY TABS */}
       <section className="mmc-col-tabs-section">
         <div className="container">
-          <div className="mmc-col-tabs" role="tablist" aria-label="Filter by course">
+          <div className="mmc-col-tabs" role="tablist" aria-label="Filter by course category">
             <button
               type="button"
               role="tab"
               aria-selected={!courseGroup}
               className={`mmc-col-tab${!courseGroup ? ' is-active' : ''}`}
-              onClick={() => setCourseGroup('')}
+              onClick={() => setCategory('')}
             >
               All courses
             </button>
-            {courseTabs.map((g) => (
+            {COURSE_CATEGORIES.map((g) => (
               <button
                 key={g.id}
                 type="button"
                 role="tab"
                 aria-selected={courseGroup === g.id}
                 className={`mmc-col-tab${courseGroup === g.id ? ' is-active' : ''}`}
-                onClick={() => setCourseGroup(courseGroup === g.id ? '' : g.id)}
+                onClick={() => setCategory(courseGroup === g.id ? '' : g.id)}
               >
-                {g.label}{g.count ? <em className="mmc-col-tab-count">{g.count}</em> : null}
+                {g.label}{counts[g.id] ? <em className="mmc-col-tab-count">{counts[g.id]}</em> : null}
               </button>
             ))}
           </div>
+
+          {activeCategory && (
+            <div className="mmc-col-programs" aria-label={`${activeCategory.label} programs`}>
+              <button
+                type="button"
+                className={`mmc-col-program${!program ? ' is-active' : ''}`}
+                onClick={() => setProgram('')}
+              >
+                All {activeCategory.label}
+              </button>
+              {activeCategory.programs.map((p) => (
+                <button
+                  key={p.id}
+                  type="button"
+                  className={`mmc-col-program${program === p.id ? ' is-active' : ''}`}
+                  onClick={() => setProgram(program === p.id ? '' : p.id)}
+                >
+                  {p.label}
+                </button>
+              ))}
+            </div>
+          )}
         </div>
       </section>
 
@@ -389,7 +471,7 @@ export default function Colleges() {
               type="button"
               className={`mmc-col-filter-btn${filterOpen ? ' is-open' : ''}`}
               aria-expanded={filterOpen}
-              onClick={() => setFilterOpen((o) => !o)}
+              onClick={openFilters}
             >
               <OutlineIcon name="filter" size={16} /> Filters {filterCount ? <em>{filterCount}</em> : null}
             </button>
@@ -402,64 +484,20 @@ export default function Colleges() {
             </div>
           </div>
 
-          <div className={`mmc-col-filters${filterOpen ? ' is-open' : ''}`}>
-            <div className="mmc-col-filters-inner">
-              <label>
-                Course
-                <select value={courseGroup} onChange={(e) => setCourseGroup(e.target.value)}>
-                  <option value="">All courses</option>
-                  {COURSE_GROUPS.map((g) => <option key={g.id} value={g.id}>{g.label}</option>)}
-                </select>
-              </label>
-              <label>
-                Specialization
-                <select value={filters.specialization} onChange={(e) => setFilters((f) => ({ ...f, specialization: e.target.value }))}>
-                  <option value="">Any specialization</option>
-                  {specializations.map((s) => <option key={s} value={s}>{s}</option>)}
-                </select>
-              </label>
-              <label>
-                Location
-                <select value={filters.location} onChange={(e) => setFilters((f) => ({ ...f, location: e.target.value }))}>
-                  <option value="">Any location</option>
-                  {locations.map((l) => <option key={l} value={l}>{l}</option>)}
-                </select>
-              </label>
-              <label>
-                College Type
-                <select value={filters.type} onChange={(e) => setFilters((f) => ({ ...f, type: e.target.value }))}>
-                  <option value="">Any type</option>
-                  {types.map((t) => <option key={t} value={t}>{t}</option>)}
-                </select>
-              </label>
-              <label>
-                Budget (annual fee)
-                <select value={filters.budget} onChange={(e) => setFilters((f) => ({ ...f, budget: e.target.value }))}>
-                  {BUDGET_OPTIONS.map((o) => <option key={o.id || 'any'} value={o.id}>{o.label}</option>)}
-                </select>
-              </label>
-              <label>
-                Rating
-                <select value={filters.rating} onChange={(e) => setFilters((f) => ({ ...f, rating: e.target.value }))}>
-                  {RATING_OPTIONS.map((o) => <option key={o.id || 'any'} value={o.id}>{o.label}</option>)}
-                </select>
-              </label>
-              {(filterCount || courseGroup) ? (
-                <button type="button" className="mmc-col-reset" onClick={clearEverything}>Clear filters</button>
-              ) : null}
-            </div>
-          </div>
-
           <p className="mmc-col-count">
             {status === 'loading' && 'Loading colleges…'}
             {status === 'ready' && (sorted.length
-              ? `${sorted.length} college${sorted.length === 1 ? '' : 's'} found${activeCourseLabel ? ` for ${activeCourseLabel}` : ''}`
+              ? `${sorted.length} college${sorted.length === 1 ? '' : 's'} found${activeLabel ? ` for ${activeLabel}` : ''}`
               : `No colleges match these filters yet.`)}
           </p>
 
           {status === 'ready' && sorted.length === 0 && (
             <div className="mmc-col-empty">
-              <p>Try a wider course group, or clear the filters to see everything.</p>
+              <p>
+                {activeLabel
+                  ? `We're adding ${activeLabel} colleges soon. Try another course, or talk to a counsellor for personal guidance.`
+                  : 'Try a wider course group, or clear the filters to see everything.'}
+              </p>
               <button type="button" className="btn btn-outline" onClick={clearEverything}>Clear filters</button>
             </div>
           )}
@@ -506,7 +544,7 @@ export default function Colleges() {
             <div className="mmc-col-sticky-avatars">
               {selected.map((c) => (
                 <span key={c._id} className="mmc-col-sticky-avatar" title={c.name}>
-                  <img src={getImageUrl(c.logo) || getImageUrl(c.image) || '/images/logo.png'} alt="" />
+                  <img src={getImageUrl(c.logo) || getImageUrl(c.image) || '/images/logo.png'} alt="" onError={imgFallback} />
                   <button type="button" onClick={() => toggleCompare(c)} aria-label={`Remove ${c.name}`}>×</button>
                 </span>
               ))}
@@ -519,6 +557,174 @@ export default function Colleges() {
               </button>
             </div>
           </div>
+        </div>
+      )}
+
+      {/* FILTER DRAWER */}
+      {filterOpen && (
+        <div className="mmc-fd-root" role="dialog" aria-modal="true" aria-label="Filter colleges">
+          <div className="mmc-fd-overlay" onClick={() => setFilterOpen(false)} />
+          <aside className="mmc-fd-panel">
+            <div className="mmc-fd-head">
+              <h2>Filters</h2>
+              <button type="button" className="mmc-fd-close" onClick={() => setFilterOpen(false)} aria-label="Close filters">
+                <OutlineIcon name="close" size={16} />
+              </button>
+            </div>
+
+            <div className="mmc-fd-body">
+              {/* COURSE TYPE */}
+              <section className="mmc-fd-section">
+                <h3>Course Type {draft.courseTypes.length ? `(${draft.courseTypes.length})` : '(0)'}</h3>
+                <div className="mmc-fd-chips">
+                  {COURSE_TYPES.map((t) => (
+                    <button
+                      key={t}
+                      type="button"
+                      className={`mmc-fd-chip${draft.courseTypes.includes(t) ? ' is-active' : ''}`}
+                      aria-pressed={draft.courseTypes.includes(t)}
+                      onClick={() => toggleDraftList('courseTypes', t)}
+                    >
+                      {t} <span aria-hidden="true">{draft.courseTypes.includes(t) ? '✓' : '+'}</span>
+                    </button>
+                  ))}
+                </div>
+              </section>
+
+              {/* SPECIALIZATION: Stream > Degree > Course > Specialization */}
+              <section className="mmc-fd-section">
+                <h3>Specialization</h3>
+
+                <label className="mmc-fd-field">
+                  <span>Stream</span>
+                  <select
+                    value={draft.category}
+                    onChange={(e) => patchDraft({ category: e.target.value, program: '', specialization: '' })}
+                  >
+                    <option value="">All streams</option>
+                    {COURSE_CATEGORIES.map((g) => <option key={g.id} value={g.id}>{g.label}</option>)}
+                  </select>
+                </label>
+
+                <label className="mmc-fd-field">
+                  <span>Degree</span>
+                  <select value={draft.degree} onChange={(e) => patchDraft({ degree: e.target.value })}>
+                    <option value="">Any degree</option>
+                    {DEGREE_OPTIONS.map((d) => <option key={d.id} value={d.id}>{d.label}</option>)}
+                  </select>
+                </label>
+
+                <label className="mmc-fd-field">
+                  <span>Course</span>
+                  <select
+                    value={draft.program}
+                    disabled={!draftCategory}
+                    onChange={(e) => patchDraft({ program: e.target.value })}
+                  >
+                    <option value="">{draftCategory ? 'All courses' : 'Select stream first'}</option>
+                    {(draftCategory?.programs || []).map((p) => <option key={p.id} value={p.id}>{p.label}</option>)}
+                  </select>
+                </label>
+
+                <label className="mmc-fd-field">
+                  <span>Specialization</span>
+                  <select
+                    value={draft.specialization}
+                    disabled={!draftCategory}
+                    onChange={(e) => patchDraft({ specialization: e.target.value })}
+                  >
+                    <option value="">{draftCategory ? 'Any specialization' : 'Select stream first'}</option>
+                    {draftSpecializations.map((s) => <option key={s} value={s}>{s}</option>)}
+                  </select>
+                </label>
+              </section>
+
+              {/* BUDGET */}
+              <section className="mmc-fd-section">
+                <h3>Budget ({budgetLabel(BUDGET_MIN)} - {budgetLabel(BUDGET_MAX)})</h3>
+                <BudgetSlider
+                  min={draft.budgetMin}
+                  max={draft.budgetMax}
+                  onChange={(min, max) => patchDraft({ budgetMin: min, budgetMax: max })}
+                />
+                <div className="mmc-fd-budget-inputs">
+                  <label>
+                    <span>₹ From</span>
+                    <input
+                      type="number"
+                      inputMode="numeric"
+                      min={BUDGET_MIN}
+                      max={BUDGET_MAX}
+                      value={draft.budgetMin}
+                      onChange={(e) => patchDraft({ budgetMin: e.target.value === '' ? '' : Number(e.target.value) })}
+                    />
+                  </label>
+                  <label>
+                    <span>₹ To</span>
+                    <input
+                      type="number"
+                      inputMode="numeric"
+                      min={BUDGET_MIN}
+                      max={BUDGET_MAX}
+                      value={draft.budgetMax}
+                      onChange={(e) => patchDraft({ budgetMax: e.target.value === '' ? '' : Number(e.target.value) })}
+                    />
+                  </label>
+                </div>
+                <p className="mmc-fd-hint">Based on annual fee. Colleges without a listed fee are hidden once you narrow the budget.</p>
+              </section>
+
+              {/* AREA */}
+              <section className="mmc-fd-section">
+                <h3>Area in Bangalore {draft.areas.length ? `(${draft.areas.length})` : '(0)'}</h3>
+                <div className="mmc-fd-chips">
+                  {AREA_OPTIONS.map((a) => (
+                    <button
+                      key={a}
+                      type="button"
+                      className={`mmc-fd-chip${draft.areas.includes(a) ? ' is-active' : ''}`}
+                      aria-pressed={draft.areas.includes(a)}
+                      onClick={() => toggleDraftList('areas', a)}
+                    >
+                      {a} <span aria-hidden="true">{draft.areas.includes(a) ? '✓' : '+'}</span>
+                    </button>
+                  ))}
+                </div>
+              </section>
+
+              {/* MORE */}
+              <section className="mmc-fd-section">
+                <h3>More filters</h3>
+                <label className="mmc-fd-field">
+                  <span>Location</span>
+                  <select value={draft.location} onChange={(e) => patchDraft({ location: e.target.value })}>
+                    <option value="">Any location</option>
+                    {locations.map((l) => <option key={l} value={l}>{l}</option>)}
+                  </select>
+                </label>
+                <label className="mmc-fd-field">
+                  <span>College type</span>
+                  <select value={draft.type} onChange={(e) => patchDraft({ type: e.target.value })}>
+                    <option value="">Any type</option>
+                    {types.map((t) => <option key={t} value={t}>{t}</option>)}
+                  </select>
+                </label>
+                <label className="mmc-fd-field">
+                  <span>Rating</span>
+                  <select value={draft.rating} onChange={(e) => patchDraft({ rating: e.target.value })}>
+                    {RATING_OPTIONS.map((o) => <option key={o.id || 'any'} value={o.id}>{o.label}</option>)}
+                  </select>
+                </label>
+              </section>
+            </div>
+
+            <div className="mmc-fd-foot">
+              <button type="button" className="mmc-fd-clear" onClick={() => { clearEverything(); setFilterOpen(false); }}>
+                Clear
+              </button>
+              <button type="button" className="mmc-fd-apply" onClick={applyFilters}>Apply Filter</button>
+            </div>
+          </aside>
         </div>
       )}
 
@@ -541,23 +747,56 @@ export default function Colleges() {
 }
 
 /* ---------------------------------------------------------------------- */
+/* Two-thumb budget slider (log scale so 10k..5Cr stays usable on a phone). */
+function BudgetSlider({ min, max, onChange }) {
+  const lo = budgetToSlider(min === '' ? BUDGET_MIN : min);
+  const hi = budgetToSlider(max === '' ? BUDGET_MAX : max);
+  return (
+    <div className="mmc-fd-slider">
+      <div className="mmc-fd-slider-labels">
+        <span>{budgetLabel(BUDGET_MIN)}</span>
+        <span>{budgetLabel(BUDGET_MAX)}</span>
+      </div>
+      <div className="mmc-fd-slider-track">
+        <div className="mmc-fd-slider-fill" style={{ left: `${lo}%`, width: `${Math.max(hi - lo, 0)}%` }} />
+        <input
+          type="range" min="0" max="100" step="1" value={lo}
+          aria-label="Minimum budget"
+          onChange={(e) => onChange(Math.min(sliderToBudget(Number(e.target.value)), max === '' ? BUDGET_MAX : max), max === '' ? BUDGET_MAX : max)}
+        />
+        <input
+          type="range" min="0" max="100" step="1" value={hi}
+          aria-label="Maximum budget"
+          onChange={(e) => onChange(min === '' ? BUDGET_MIN : min, Math.max(sliderToBudget(Number(e.target.value)), min === '' ? BUDGET_MIN : min))}
+        />
+      </div>
+    </div>
+  );
+}
+
+/* ---------------------------------------------------------------------- */
 function CollegeCard({ college, isSelected, compareFull, onToggleCompare, onView }) {
   const fee = annualFee(college);
   const courses = courseLabels(college);
   const accreds = (college.accreditations || []).slice(0, 2);
   const highest = formatLPA(college.placements?.highestPackage);
   const hostel = college.hostel?.available;
+  const area = collegeArea(college);
 
   return (
     <article className={`mmc-col-card${isSelected ? ' is-selected' : ''}`}>
       <div className="mmc-col-card-photo">
-        <img src={getImageUrl(college.image) || '/images/college-placeholder.jpg'} alt={college.name} />
+        <img src={getImageUrl(college.image) || PLACEHOLDER} alt="" onError={imgFallback} />
         {college.ranking ? <span className="mmc-col-card-rank">#{college.ranking}</span> : null}
-        <span className="mmc-col-card-logo"><img src={getImageUrl(college.logo) || '/images/logo.png'} alt="" /></span>
+        <span className="mmc-col-card-logo"><img src={getImageUrl(college.logo) || '/images/logo.png'} alt="" onError={imgFallback} /></span>
       </div>
       <div className="mmc-col-card-body">
         <strong>{college.name}</strong>
-        <small><OutlineIcon name="pin" size={13} /> {college.location || 'Karnataka'} {college.rating ? <>· ★ {college.rating}</> : null}</small>
+        <small>
+          <OutlineIcon name="pin" size={13} /> {college.location || 'Karnataka'}
+          {area && !String(college.location || '').toLowerCase().includes(area.toLowerCase()) ? ` (${area})` : ''}
+          {college.rating ? <> · ★ {college.rating}</> : null}
+        </small>
 
         {accreds.length > 0 && (
           <div className="mmc-col-card-chips">
@@ -646,12 +885,14 @@ function CompareTable({ colleges, onRemove }) {
           </thead>
           <tbody>
             <tr><td>Location</td>{colleges.map((c) => <td key={c._id}>{c.location || '-'}</td>)}</tr>
+            <tr><td>Area</td>{colleges.map((c) => <td key={c._id}>{collegeArea(c) || '-'}</td>)}</tr>
             <tr><td>Type</td>{colleges.map((c) => <td key={c._id}>{c.type || '-'}</td>)}</tr>
             <tr><td>Ranking</td>{colleges.map((c) => <td key={c._id}>{c.ranking ? `#${c.ranking}` : '-'}</td>)}</tr>
             <tr><td>Rating</td>{colleges.map((c) => <td key={c._id}>{c.rating ? `★ ${c.rating}` : '-'}</td>)}</tr>
             <tr><td>Accreditation</td>{colleges.map((c) => <td key={c._id}>{(c.accreditations || []).join(', ') || '-'}</td>)}</tr>
             <tr><td>Specializations</td>{colleges.map((c) => <td key={c._id}>{(c.specializations || []).join(', ') || '-'}</td>)}</tr>
             <tr><td>Courses Offered</td>{colleges.map((c) => <td key={c._id}>{courseLabels(c).join(', ') || '-'}</td>)}</tr>
+            <tr><td>Course Type</td>{colleges.map((c) => <td key={c._id}>{collegeCourseTypes(c).join(', ')}</td>)}</tr>
             <tr><td>Annual Tuition Fee</td>{colleges.map((c) => <td key={c._id}>{formatINR(c.fees?.tuitionAnnual ?? c.fees?.annual) || 'On request'}</td>)}</tr>
             <tr><td>Total Course Fee</td>{colleges.map((c) => <td key={c._id}>{formatINR(c.fees?.totalCourse) || 'On request'}</td>)}</tr>
             <tr><td>Highest Package</td>{colleges.map((c) => <td key={c._id}>{formatLPA(c.placements?.highestPackage) || 'On request'}</td>)}</tr>

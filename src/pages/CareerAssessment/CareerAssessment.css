@@ -303,7 +303,7 @@
   font-size:0.95rem; font-family:'Inter',system-ui,-apple-system,sans-serif; color:var(--ink);
   cursor:pointer; transition:border-color 0.2s, background 0.2s, transform 0.2s;
 }
-.mmc-ca-quiz-option:hover{ border-color:var(--coral); transform: translateX(3px); }
+
 .mmc-ca-quiz-option.selected{ border-color:var(--coral); background:var(--mmc-orange-light); font-weight:600; }
 
 .mmc-ca-quiz-nav{ display:flex; justify-content:space-between; gap:12px; }
@@ -357,3 +357,87 @@
   .mmc-ca-quiz-nav{ flex-direction:column-reverse; gap:10px; }
   .mmc-ca-quiz-nav button{ width:100%; justify-content:center; }
 }
+
+
+/* ==========================================================================
+   Append to CareerAssessment.css  (and DELETE any existing plain
+   ".mmc-ca-quiz-option:hover" rule - replace it with the one below)
+   ========================================================================== */
+
+.mmc-ca-quiz-option {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  text-align: left;
+  -webkit-tap-highlight-color: transparent;   /* no grey flash on mobile taps */
+  transition: border-color .18s, background .18s, transform .12s, box-shadow .18s;
+}
+
+/* Hover ONLY on devices that really hover (mouse). On touch screens the
+   last-tapped position otherwise stays "hovered" on the next question -
+   this was half of the "previous answer looks marked" bug. */
+@media (hover: hover) and (pointer: fine) {
+  .mmc-ca-quiz-option:hover:not(:disabled):not(.selected) {
+    border-color: var(--mmc-orange, #f57c00);
+    background: rgba(245, 124, 0, 0.06);
+  }
+}
+
+/* Keyboard focus ring only for keyboard users, never after a tap/click */
+.mmc-ca-quiz-option:focus { outline: none; }
+.mmc-ca-quiz-option:focus-visible {
+  outline: 2px solid var(--mmc-orange, #f57c00);
+  outline-offset: 2px;
+}
+
+.mmc-ca-quiz-option:active:not(:disabled) { transform: scale(0.985); }
+
+.mmc-ca-quiz-option.selected {
+  border-color: var(--mmc-orange, #f57c00);
+  background: rgba(245, 124, 0, 0.12);
+  box-shadow: 0 0 0 3px rgba(245, 124, 0, 0.15);
+}
+
+.mmc-ca-quiz-option-key {
+  flex: 0 0 26px;
+  height: 26px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 600;
+  background: rgba(0, 0, 0, 0.06);
+}
+.mmc-ca-quiz-option.selected .mmc-ca-quiz-option-key {
+  background: var(--mmc-orange, #f57c00);
+  color: #fff;
+}
+.mmc-ca-quiz-option-label { flex: 1; }
+.mmc-ca-quiz-option-tick {
+  font-weight: 700;
+  color: var(--mmc-orange, #f57c00);
+  animation: mmc-ca-pop .22s ease-out;
+}
+
+/* Slide transition between questions */
+.mmc-ca-quiz-slide.slide-forward { animation: mmc-ca-in-right .28s ease-out; }
+.mmc-ca-quiz-slide.slide-back    { animation: mmc-ca-in-left  .28s ease-out; }
+
+@keyframes mmc-ca-in-right { from { opacity: 0; transform: translateX(24px); }  to { opacity: 1; transform: none; } }
+@keyframes mmc-ca-in-left  { from { opacity: 0; transform: translateX(-24px); } to { opacity: 1; transform: none; } }
+@keyframes mmc-ca-pop      { from { transform: scale(0.4); opacity: 0; }         to { transform: scale(1); opacity: 1; } }
+
+@media (prefers-reduced-motion: reduce) {
+  .mmc-ca-quiz-slide, .mmc-ca-quiz-option-tick { animation: none; }
+}
+
+/* Section pills: done state + small counter */
+.mmc-ca-section-pill small { opacity: .7; font-weight: 500; }
+.mmc-ca-section-pill.is-done { opacity: .85; }
+
+.mmc-ca-quiz-nav { display: flex; justify-content: space-between; gap: 10px; }
+.mmc-ca-quiz-hint { margin-top: 10px; font-size: 12px; opacity: .55; text-align: center; }
+@media (hover: none) { .mmc-ca-quiz-hint, .mmc-ca-quiz-option-key { display: none; } }

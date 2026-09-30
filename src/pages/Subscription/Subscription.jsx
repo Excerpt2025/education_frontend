@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../../api/api.js';
-import { useAuth } from '../../context/AuthContext.jsx';
+import { useAuth } from '../../context/useAuth.js';
 import ScrollCard from '../../motion/ScrollCard.jsx';
 import './Subscription.css';
 import { loadRazorpayScript } from '../../utils/razorpay.js';
@@ -36,6 +36,21 @@ function badgeLabel(plan, featured) {
   return 'Starting Plan';
 }
 
+// Display-only calculation. The server is the source of truth at purchase time.
+// Display-only. Mirrors the server: whole rupees, ₹1 floor unless fully free.
+function applyPromo(plan, promo) {
+  if (!promo) return plan.price;
+  if (promo.applicablePlans?.length && !promo.applicablePlans.includes(String(plan._id))) return plan.price;
+  let discount =
+    promo.discountType === 'percent'
+      ? (plan.price * Number(promo.discountValue || 0)) / 100
+      : Number(promo.discountValue || 0);
+  if (promo.maxDiscount) discount = Math.min(discount, Number(promo.maxDiscount));
+  const raw = Math.max(0, plan.price - discount);
+  if (raw === 0) return 0;
+  return Math.max(1, Math.round(raw));
+}
+
 function CheckIcon() {
   return (
     <svg className="mmc-price-check" viewBox="0 0 22 22" fill="none" aria-hidden="true">
@@ -65,6 +80,10 @@ export default function Subscription() {
   const [plans, setPlans] = useState(FALLBACK_PLANS);
   const [processingId, setProcessingId] = useState(null);
   const [message, setMessage] = useState('');
+  const [promoInput, setPromoInput] = useState('');
+  const [promo, setPromo] = useState(null); // applied promo object
+  const [promoStatus, setPromoStatus] = useState({ type: '', text: '' });
+  const [promoLoading, setPromoLoading] = useState(false);
   const { student } = useAuth();
   const navigate = useNavigate();
 
@@ -79,13 +98,55 @@ export default function Subscription() {
     [plans]
   );
 
+  const applyPromoCode = async () => {
+    const code = promoInput.trim().toUpperCase();
+    if (!code) {
+      setPromoStatus({ type: 'error', text: 'Enter a promo code first.' });
+      return;
+    }
+    setPromoLoading(true);
+    setPromoStatus({ type: '', text: '' });
+    try {
+      const res = await api.post('/promo-codes/validate', { code });
+      if (res.data.valid) {
+        setPromo({ ...res.data, code });
+        setPromoInput(code);
+        setPromoStatus({ type: 'success', text: res.data.message || `Promo code ${code} applied.` });
+      } else {
+        setPromo(null);
+        setPromoStatus({ type: 'error', text: res.data.message || 'Invalid or expired promo code.' });
+      }
+    } catch (err) {
+      setPromo(null);
+      setPromoStatus({ type: 'error', text: err.response?.data?.message || 'Invalid or expired promo code.' });
+    } finally {
+      setPromoLoading(false);
+    }
+  };
+
+  const removePromo = () => {
+    setPromo(null);
+    setPromoInput('');
+    setPromoStatus({ type: '', text: '' });
+  };
+
   const purchase = async (plan) => {
     if (!student) { navigate('/login', { state: { from: '/subscription' } }); return; }
     setProcessingId(plan._id);
     setMessage('');
     try {
-      const order = await api.post('/subscriptions/purchase', { planId: plan._id });
-      const { payment, razorpayOrderId, razorpayKeyId, amount, currency } = order.data;
+      const order = await api.post('/subscriptions/purchase', {
+        planId: plan._id,
+        promoCode: promo?.code || undefined,
+      });
+      const { payment, razorpayOrderId, razorpayKeyId, amount, currency, free } = order.data;
+
+      // 100% discount: no payment needed
+      if (free || amount === 0) {
+        setMessage(`Subscribed to the ${plan.name} plan! You now have full access to Career Assessment, KCET/PGCET predictors and your dashboard.`);
+        setProcessingId(null);
+        return;
+      }
 
       const loaded = await loadRazorpayScript();
       if (!loaded) {
@@ -109,6 +170,7 @@ export default function Subscription() {
               razorpay_payment_id: response.razorpay_payment_id,
               razorpay_signature: response.razorpay_signature,
               planId: plan._id,
+              promoCode: promo?.code || undefined,
             });
             if (verify.data.success) {
               setMessage(`Subscribed to the ${plan.name} plan! You now have full access to Career Assessment, KCET/PGCET predictors and your dashboard.`);
@@ -142,10 +204,42 @@ export default function Subscription() {
 
         {message && <p className="mmc-pricing-message">{message}</p>}
 
+        <div className="mmc-promo">
+          <label htmlFor="mmc-promo-input" className="mmc-promo-label">Have a promo code?</label>
+          <div className="mmc-promo-row">
+            <input
+              id="mmc-promo-input"
+              type="text"
+              className="mmc-promo-input"
+              placeholder="Enter code"
+              value={promoInput}
+              onChange={(e) => setPromoInput(e.target.value.toUpperCase())}
+              onKeyDown={(e) => { if (e.key === 'Enter' && !promo) applyPromoCode(); }}
+              disabled={!!promo || promoLoading}
+              autoComplete="off"
+              spellCheck="false"
+            />
+            {promo ? (
+              <button type="button" className="mmc-promo-btn mmc-promo-btn--ghost" onClick={removePromo}>
+                Remove
+              </button>
+            ) : (
+              <button type="button" className="mmc-promo-btn" onClick={applyPromoCode} disabled={promoLoading}>
+                {promoLoading ? 'Checking...' : 'Apply'}
+              </button>
+            )}
+          </div>
+          {promoStatus.text && (
+            <p className={`mmc-promo-status mmc-promo-status--${promoStatus.type}`}>{promoStatus.text}</p>
+          )}
+        </div>
+
         <div className="mmc-pricing-grid mmc-scroll-stage">
           {orderedPlans.map((plan, index) => {
             const featured = isFeaturedPlan(plan, orderedPlans);
             const features = [...(plan.features || []), 'Full access via your Student Dashboard'];
+         const finalPrice = applyPromo(plan, promo);
+            const hasDiscount = promo && finalPrice < plan.price;
 
             return (
               <ScrollCard
@@ -161,8 +255,15 @@ export default function Subscription() {
                 </span>
 
                 <div className="mmc-price-amount">
-                  ₹{plan.price} <small>INR {periodLabel(plan.durationInDays)}</small>
+                  {hasDiscount && <s className="mmc-price-old">₹{plan.price}</s>}
+                  ₹{finalPrice} <small>INR {periodLabel(plan.durationInDays)}</small>
                 </div>
+
+                {hasDiscount && (
+                  <span className="mmc-price-saving">
+                    {promo.code} applied · You save ₹{Math.round((plan.price - finalPrice) * 100) / 100}
+                  </span>
+                )}
 
                 <p className="mmc-price-desc">{planCopy(plan)}</p>
 
@@ -172,7 +273,11 @@ export default function Subscription() {
                   onClick={() => purchase(plan)}
                   disabled={processingId === plan._id}
                 >
-                  {processingId === plan._id ? 'Processing...' : `Subscribe for ₹${plan.price}`}
+                  {processingId === plan._id
+                    ? 'Processing...'
+                    : finalPrice === 0
+                      ? 'Activate for Free'
+                      : `Subscribe for ₹${finalPrice}`}
                 </button>
 
                 <ul className="mmc-price-features">

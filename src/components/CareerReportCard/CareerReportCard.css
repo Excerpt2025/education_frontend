@@ -1,125 +1,200 @@
 .mmc-report-wrap {
   --rep-purple: #7c3aed;
-  --rep-pink: #db2777;
   --rep-teal: #0d9488;
+  --rep-card: rgba(255, 255, 255, 0.82);
+  --rep-line: rgba(15, 23, 42, 0.08);
 }
 
-.mmc-report-actions {
-  display: flex;
-  gap: 12px;
-  flex-wrap: wrap;
-  margin-bottom: 18px;
-}
+.mmc-report-actions { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 18px; }
 
 .mmc-report-card {
   position: relative;
   overflow: hidden;
+  box-sizing: border-box;
   background: linear-gradient(160deg, #ffffff 0%, var(--mmc-blue-light) 55%, var(--mmc-orange-light) 130%);
   border-radius: 22px;
-  padding: 34px;
-  box-shadow: var(--mmc-shadow-lift, 0 20px 50px rgba(15,23,42,0.12));
+  padding: 32px;
+  box-shadow: var(--mmc-shadow-lift, 0 20px 50px rgba(15, 23, 42, 0.12));
   animation: mmc-report-in 420ms cubic-bezier(0.22, 1, 0.36, 1) both;
 }
-@keyframes mmc-report-in {
-  from { opacity: 0; transform: translateY(16px); }
-  to { opacity: 1; transform: translateY(0); }
-}
+@keyframes mmc-report-in { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: none; } }
 .mmc-report-wrap.is-compact .mmc-report-card { padding: 22px; border-radius: 16px; }
 
 .mmc-report-blob { position: absolute; border-radius: 50%; pointer-events: none; }
 .mmc-report-blob-a { top: -100px; right: -80px; width: 260px; height: 260px; background: radial-gradient(circle, var(--mmc-orange-glow) 0%, transparent 70%); }
 .mmc-report-blob-b { bottom: -120px; left: -60px; width: 240px; height: 240px; background: radial-gradient(circle, var(--mmc-blue-glow) 0%, transparent 70%); }
 
-.mmc-report-head { position: relative; z-index: 1; margin-bottom: 18px; }
+/* ---- shared ---- */
+.mmc-report-card > * { position: relative; z-index: 1; }
+.mmc-report-card button { font: inherit; color: inherit; }
+
+/* ---- top bar ---- */
+.mmc-report-topbar {
+  display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap;
+  padding-bottom: 16px; margin-bottom: 20px; border-bottom: 1px solid var(--rep-line);
+}
+.mmc-report-logo { height: 44px; width: auto; max-width: 200px; object-fit: contain; display: block; }
+.mmc-report-logo-text { font-size: 1.15rem; font-weight: 800; color: var(--mmc-blue-dark); letter-spacing: -0.01em; }
+.mmc-report-meta { display: flex; flex-direction: column; align-items: flex-end; gap: 6px; }
+.mmc-report-meta small { color: var(--mmc-muted); font-size: 0.72rem; }
 .mmc-report-badge {
   display: inline-flex; align-items: center;
-  background: var(--mmc-gradient-orange-blue);
-  color: #fff; font-size: 0.7rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.06em;
-  padding: 6px 14px; border-radius: 50px; margin-bottom: 12px;
+  background: var(--mmc-gradient-orange-blue); color: #fff;
+  font-size: 0.68rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.06em;
+  padding: 6px 14px; border-radius: 50px;
 }
+
+/* ---- heading ---- */
+.mmc-report-head { margin-bottom: 18px; }
+.mmc-report-eyebrow { margin: 0 0 4px; font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--mmc-muted); font-weight: 700; }
 .mmc-report-head h2 {
-  margin: 0 0 6px;
+  margin: 0;
   font-size: clamp(1.5rem, 3vw, 2.1rem);
+  line-height: 1.2;
   background: linear-gradient(120deg, var(--mmc-blue-dark), var(--rep-purple), var(--mmc-orange));
   background-size: 200% auto;
   -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
   animation: mmc-report-gradient 6s ease infinite;
 }
-@keyframes mmc-report-gradient {
-  0%, 100% { background-position: 0% center; }
-  50% { background-position: 100% center; }
+@keyframes mmc-report-gradient { 0%, 100% { background-position: 0% center; } 50% { background-position: 100% center; } }
+
+/* ---- student details ---- */
+.mmc-report-student {
+  display: flex; align-items: center; gap: 16px;
+  background: var(--rep-card); border: 1px solid var(--rep-line); border-radius: 16px;
+  padding: 14px 18px; margin-bottom: 16px;
 }
-.mmc-report-name { margin: 0; color: var(--mmc-muted); font-size: 0.85rem; }
-
-.mmc-report-top-field {
-  position: relative; z-index: 1;
-  background: rgba(255,255,255,0.75);
-  border-radius: 14px;
-  padding: 16px 20px;
-  margin-bottom: 22px;
+.mmc-report-avatar {
+  flex: 0 0 52px; height: 52px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  background: var(--mmc-gradient-orange-blue); color: #fff; font-size: 1.3rem; font-weight: 800;
 }
-.mmc-report-top-label { font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: var(--mmc-orange-dark); }
-.mmc-report-top-field h3 { margin: 4px 0 4px; font-size: 1.25rem; color: var(--mmc-dark); }
-.mmc-report-top-field p { margin: 0; color: var(--mmc-muted); font-size: 0.85rem; }
+.mmc-report-student-grid {
+  flex: 1; display: grid; gap: 10px 20px;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+}
+.mmc-report-student-grid span { display: block; font-size: 0.66rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--mmc-muted); font-weight: 700; }
+.mmc-report-student-grid strong { display: block; font-size: 0.86rem; color: var(--mmc-dark); word-break: break-word; }
 
-.mmc-report-section { position: relative; z-index: 1; margin-bottom: 24px; }
-.mmc-report-section h4 { margin: 0 0 12px; font-size: 1rem; color: var(--mmc-dark); }
+/* ---- stat tiles ---- */
+.mmc-report-stats { display: grid; gap: 12px; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); margin-bottom: 14px; }
+.mmc-report-stat {
+  background: var(--rep-card); border: 1px solid var(--rep-line); border-radius: 14px; padding: 12px 14px;
+  transition: transform 0.18s, box-shadow 0.18s;
+}
+.mmc-report-stat span { display: block; font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--mmc-muted); font-weight: 700; margin-bottom: 4px; }
+.mmc-report-stat strong { font-size: 0.98rem; color: var(--mmc-dark); line-height: 1.3; }
+.mmc-report-stat.is-primary { background: linear-gradient(135deg, var(--mmc-orange), var(--mmc-orange-dark)); border: 0; }
+.mmc-report-stat.is-primary span, .mmc-report-stat.is-primary strong { color: #fff; }
+@media (hover: hover) { .mmc-report-stat:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(15, 23, 42, 0.1); } }
 
-.mmc-report-bars { display: flex; flex-direction: column; gap: 10px; }
-.mmc-report-bar-row { display: grid; grid-template-columns: 140px 1fr 30px; align-items: center; gap: 10px; }
+.mmc-report-stream { margin: 0 0 22px; font-size: 0.84rem; color: var(--mmc-dark); }
+
+/* ---- sections ---- */
+.mmc-report-section { margin-bottom: 26px; }
+.mmc-report-section h4 { margin: 0 0 12px; font-size: 1rem; color: var(--mmc-dark); display: flex; align-items: baseline; gap: 8px; flex-wrap: wrap; }
+.mmc-report-section h4 small { font-size: 0.68rem; font-weight: 500; color: var(--mmc-muted); }
+.mmc-report-note { margin: 10px 0 0; font-size: 0.78rem; color: var(--mmc-muted); }
+
+/* time chips */
+.mmc-report-time-grid { display: grid; gap: 10px; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); }
+.mmc-report-time-chip { background: var(--rep-card); border: 1px solid var(--rep-line); border-left: 3px solid var(--mmc-blue); border-radius: 12px; padding: 10px 12px; }
+.mmc-report-time-chip span { display: block; font-size: 0.7rem; color: var(--mmc-muted); font-weight: 600; }
+.mmc-report-time-chip strong { font-size: 0.92rem; color: var(--mmc-dark); }
+
+/* score bars (buttons) */
+.mmc-report-bars { display: flex; flex-direction: column; gap: 8px; }
+.mmc-report-bar-row {
+  display: grid; grid-template-columns: minmax(110px, 170px) 1fr 72px; align-items: center; gap: 12px;
+  width: 100%; text-align: left; cursor: pointer;
+  background: transparent; border: 1px solid transparent; border-radius: 10px; padding: 6px 8px;
+  transition: background 0.18s, opacity 0.18s, border-color 0.18s;
+}
+@media (hover: hover) { .mmc-report-bar-row:hover { background: rgba(255, 255, 255, 0.7); } }
+.mmc-report-bar-row.is-active { background: #fff; border-color: var(--mmc-orange); }
+.mmc-report-bar-row.is-dim { opacity: 0.45; }
 .mmc-report-bar-label { font-size: 0.78rem; font-weight: 600; color: var(--mmc-dark); }
-.mmc-report-bar-track { height: 10px; border-radius: 50px; background: rgba(15,23,42,0.08); overflow: hidden; }
-.mmc-report-bar-fill { height: 100%; border-radius: 50px; animation: mmc-bar-grow 900ms cubic-bezier(0.22,1,0.36,1) both; }
+.mmc-report-bar-track { display: block; height: 10px; border-radius: 50px; background: rgba(15, 23, 42, 0.08); overflow: hidden; }
+.mmc-report-bar-fill { display: block; height: 100%; border-radius: 50px; animation: mmc-bar-grow 900ms cubic-bezier(0.22, 1, 0.36, 1) both; }
 @keyframes mmc-bar-grow { from { width: 0 !important; } }
 .mmc-report-bar-fill.accent-0 { background: linear-gradient(90deg, var(--mmc-blue), var(--mmc-blue-dark)); }
 .mmc-report-bar-fill.accent-1 { background: linear-gradient(90deg, var(--mmc-orange), var(--mmc-orange-dark)); }
 .mmc-report-bar-fill.accent-2 { background: linear-gradient(90deg, var(--rep-purple), #a855f7); }
 .mmc-report-bar-fill.accent-3 { background: linear-gradient(90deg, var(--rep-teal), #22c55e); }
-.mmc-report-bar-score { font-size: 0.78rem; font-weight: 700; color: var(--mmc-muted); text-align: right; }
+.mmc-report-bar-score { font-size: 0.78rem; font-weight: 700; color: var(--mmc-dark); text-align: right; white-space: nowrap; }
+.mmc-report-bar-score small { color: var(--mmc-muted); font-weight: 500; }
 
-.mmc-report-careers { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; }
+/* careers (expandable cards) */
+.mmc-report-careers { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px; }
 .mmc-report-career-card {
-  background: rgba(255,255,255,0.8);
-  border-left: 3px solid var(--mmc-orange);
-  border-radius: 12px;
-  padding: 12px 14px;
+  display: flex; gap: 12px; align-items: flex-start; text-align: left; cursor: pointer;
+  background: var(--rep-card); border: 1px solid var(--rep-line); border-left: 3px solid var(--mmc-orange);
+  border-radius: 12px; padding: 12px 14px; transition: transform 0.18s, box-shadow 0.18s;
 }
-.mmc-report-career-card:nth-child(2) { border-left-color: var(--mmc-blue); }
-.mmc-report-career-card:nth-child(3) { border-left-color: var(--rep-purple); }
-.mmc-report-career-card strong { display: block; font-size: 0.9rem; color: var(--mmc-dark); margin-bottom: 4px; }
-.mmc-report-career-card p { margin: 0; font-size: 0.8rem; color: var(--mmc-muted); line-height: 1.5; }
+.mmc-report-career-card:nth-child(3n + 2) { border-left-color: var(--mmc-blue); }
+.mmc-report-career-card:nth-child(3n + 3) { border-left-color: var(--rep-purple); }
+@media (hover: hover) { .mmc-report-career-card:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(15, 23, 42, 0.1); } }
+.mmc-report-career-rank { flex: 0 0 24px; height: 24px; border-radius: 8px; background: rgba(15, 23, 42, 0.06); font-size: 0.72rem; font-weight: 800; display: flex; align-items: center; justify-content: center; }
+.mmc-report-career-body { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+.mmc-report-career-body strong { font-size: 0.9rem; color: var(--mmc-dark); }
+.mmc-report-career-blurb { font-size: 0.8rem; color: var(--mmc-muted); line-height: 1.5; display: none; }
+.mmc-report-career-card.is-open .mmc-report-career-blurb { display: block; }
+.mmc-report-career-card.is-open { box-shadow: 0 8px 20px rgba(15, 23, 42, 0.1); }
+.mmc-report-more { margin-top: 12px; background: none; border: 0; color: var(--mmc-orange-dark); font-weight: 700; font-size: 0.82rem; cursor: pointer; padding: 4px 0; }
 
+/* course chips */
 .mmc-report-chips { display: flex; flex-wrap: wrap; gap: 8px; }
-.mmc-report-chips span {
-  background: rgba(255,255,255,0.85); border: 1px solid rgba(15,23,42,0.08);
-  padding: 6px 14px; border-radius: 50px; font-size: 0.78rem; font-weight: 600; color: var(--mmc-dark);
-}
+.mmc-report-chips span { background: var(--rep-card); border: 1px solid var(--rep-line); padding: 6px 14px; border-radius: 50px; font-size: 0.78rem; font-weight: 600; color: var(--mmc-dark); }
 
-.mmc-report-roadmap { display: flex; flex-direction: column; gap: 14px; }
-.mmc-report-roadmap-step { display: flex; gap: 12px; align-items: flex-start; }
-.mmc-report-roadmap-dot {
-  flex-shrink: 0; width: 26px; height: 26px; border-radius: 50%;
-  background: var(--mmc-gradient-orange-blue); color: #fff;
-  display: flex; align-items: center; justify-content: center;
-  font-size: 0.75rem; font-weight: 800;
-}
+/* roadmap timeline with connecting line */
+.mmc-report-roadmap { list-style: none; margin: 0; padding: 0; position: relative; display: flex; flex-direction: column; gap: 16px; }
+.mmc-report-roadmap::before { content: ''; position: absolute; left: 12px; top: 12px; bottom: 12px; width: 2px; background: linear-gradient(var(--mmc-orange), var(--mmc-blue)); opacity: 0.35; }
+.mmc-report-roadmap-step { display: flex; gap: 14px; align-items: flex-start; position: relative; }
+.mmc-report-roadmap-dot { flex: 0 0 26px; height: 26px; border-radius: 50%; background: var(--mmc-gradient-orange-blue); color: #fff; display: flex; align-items: center; justify-content: center; font-size: 0.74rem; font-weight: 800; box-shadow: 0 0 0 4px #fff; }
 .mmc-report-roadmap-step strong { display: block; font-size: 0.88rem; color: var(--mmc-dark); margin-bottom: 2px; }
 .mmc-report-roadmap-step p { margin: 0; font-size: 0.8rem; color: var(--mmc-muted); line-height: 1.5; }
 
+/* strengths / growth */
 .mmc-report-two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
 .mmc-report-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
-.mmc-report-list li {
-  font-size: 0.82rem; padding: 8px 12px; border-radius: 10px; background: rgba(255,255,255,0.7);
-}
+.mmc-report-list li { font-size: 0.82rem; padding: 8px 12px; border-radius: 10px; background: var(--rep-card); }
 .mmc-report-list.is-good li { border-left: 3px solid var(--rep-teal); }
 .mmc-report-list.is-growth li { border-left: 3px solid var(--mmc-orange); }
 
-.mmc-report-footnote { background: rgba(255,255,255,0.6); border-radius: 12px; padding: 14px 18px; }
+.mmc-report-footnote { background: rgba(255, 255, 255, 0.6); border-radius: 12px; padding: 14px 18px; }
 .mmc-report-footnote p { margin: 0 0 6px; font-size: 0.82rem; color: var(--mmc-dark); }
 .mmc-report-footnote p:last-child { margin-bottom: 0; }
 
+.mmc-report-footer { display: flex; flex-direction: column; gap: 2px; padding-top: 14px; border-top: 1px solid var(--rep-line); font-size: 0.7rem; color: var(--mmc-muted); text-align: center; }
+.mmc-report-footer span:first-child { font-weight: 700; color: var(--mmc-dark); }
+
+/* ---- mobile ---- */
 @media (max-width: 640px) {
-  .mmc-report-card { padding: 22px 18px; }
-  .mmc-report-bar-row { grid-template-columns: 100px 1fr 26px; }
+  .mmc-report-card { padding: 20px 16px; }
+  .mmc-report-topbar { flex-direction: column; align-items: flex-start; }
+  .mmc-report-meta { align-items: flex-start; }
+  .mmc-report-student { flex-direction: column; align-items: flex-start; }
+  .mmc-report-bar-row { grid-template-columns: 1fr 64px; }
+  .mmc-report-bar-track { grid-column: 1 / -1; grid-row: 2; }
   .mmc-report-two-col { grid-template-columns: 1fr; }
 }
+
+/* ---- PDF export mode ----
+   html2canvas can't capture gradient text, running animations or hidden
+   content, and it lays out at the current screen width. This mode fixes all
+   of that so the PDF always looks like the A4-style desktop layout. */
+.mmc-report-wrap.is-exporting .mmc-report-card {
+  width: 794px; max-width: none; border-radius: 0; box-shadow: none; animation: none;
+}
+.mmc-report-wrap.is-exporting *, .mmc-report-wrap.is-exporting *::before, .mmc-report-wrap.is-exporting *::after {
+  animation: none !important; transition: none !important;
+}
+.mmc-report-wrap.is-exporting .mmc-report-head h2 { background: none; -webkit-text-fill-color: currentColor; color: var(--mmc-blue-dark); }
+.mmc-report-wrap.is-exporting .mmc-report-career-blurb { display: block; }
+.mmc-report-wrap.is-exporting .mmc-report-bar-row { grid-template-columns: 170px 1fr 72px; }
+.mmc-report-wrap.is-exporting .mmc-report-bar-track { grid-column: auto; grid-row: auto; }
+.mmc-report-wrap.is-exporting .mmc-report-two-col { grid-template-columns: 1fr 1fr; }
+.mmc-report-wrap.is-exporting .mmc-report-student { flex-direction: row; align-items: center; }
+.mmc-report-wrap.is-exporting .mmc-report-topbar { flex-direction: row; align-items: center; }
+.mmc-report-wrap.is-exporting .mmc-report-meta { align-items: flex-end; }
+.mmc-report-wrap.is-exporting .mmc-report-bar-row.is-dim { opacity: 1; }

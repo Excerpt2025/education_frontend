@@ -455,3 +455,57 @@
   .mmc-dash-college-grid { grid-template-columns: 1fr 1fr; }
   .mmc-dash-banner { flex-direction: column; align-items: flex-start; }
 }
+
+
+/* ============================================================
+   APPEND to the bottom of StudentDashboard.css
+   ============================================================ */
+.mmc-dash-kyc-verified-note {
+  display: flex; align-items: center; gap: 6px;
+  background: var(--mmc-success-bg); color: var(--mmc-success);
+  padding: 10px 14px; border-radius: 10px; font-size: 0.82rem; font-weight: 600; margin-bottom: 16px;
+}
+.mmc-dash-kyc-docs-title { margin: 22px 0 4px; font-size: 0.98rem; color: var(--mmc-dark); }
+.mmc-dash-kyc-docs-sub { margin: 0 0 14px; font-size: 0.8rem; color: var(--mmc-muted); }
+
+.mmc-dash-kyc-docs {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+  margin-bottom: 18px;
+}
+.mmc-dash-kyc-doc {
+  display: flex; flex-direction: column; gap: 8px;
+  padding: 14px; border: 1px dashed var(--mmc-border); border-radius: 14px; background: #fff;
+}
+.mmc-dash-kyc-doc.is-done { border-style: solid; border-color: var(--dash-teal); background: var(--dash-teal-light); }
+.mmc-dash-kyc-doc-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.mmc-dash-kyc-doc-head strong { font-size: 0.86rem; color: var(--mmc-dark); }
+.mmc-dash-kyc-doc-chip {
+  font-size: 0.66rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.03em;
+  padding: 3px 9px; border-radius: 50px; background: var(--mmc-orange-light); color: var(--mmc-orange-dark); white-space: nowrap;
+}
+.mmc-dash-kyc-doc-chip.is-ok { background: var(--mmc-success-bg); color: var(--mmc-success); }
+.mmc-dash-kyc-doc p { margin: 0; font-size: 0.76rem; line-height: 1.45; color: var(--mmc-muted); }
+
+.mmc-dash-kyc-doc-preview {
+  min-height: 110px; border-radius: 10px; background: var(--mmc-surface);
+  display: flex; align-items: center; justify-content: center; overflow: hidden; padding: 6px;
+}
+.mmc-dash-kyc-doc-preview img { max-width: 100%; max-height: 150px; object-fit: contain; border-radius: 6px; }
+.mmc-dash-kyc-doc-file { font-size: 0.76rem; color: var(--mmc-dark); text-align: center; word-break: break-all; padding: 4px 8px; }
+.mmc-dash-kyc-doc-file.is-empty { color: var(--mmc-muted); }
+
+.mmc-dash-kyc-doc-actions { display: flex; align-items: center; gap: 10px; }
+.mmc-dash-kyc-doc-btn {
+  display: inline-flex; align-items: center; cursor: pointer;
+  padding: 8px 14px; border-radius: 50px; font-size: 0.78rem; font-weight: 700;
+  background: var(--mmc-dark); color: #fff;
+}
+.mmc-dash-kyc-doc-btn input { position: absolute; width: 1px; height: 1px; opacity: 0; pointer-events: none; }
+.mmc-dash-kyc-doc-btn:focus-within { outline: 2px solid var(--mmc-orange); outline-offset: 2px; }
+.mmc-dash-kyc-doc-remove { border: 0; background: none; color: var(--mmc-danger); font-size: 0.78rem; font-weight: 700; cursor: pointer; }
+
+@media (max-width: 860px) {
+  .mmc-dash-kyc-docs { grid-template-columns: 1fr; }
+}

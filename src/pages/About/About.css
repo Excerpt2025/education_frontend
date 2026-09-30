@@ -349,20 +349,20 @@
 
 /* —— Mission / Vision —— */
 .mmc-about-mv {
-  padding: 28px 0 40px;
+  padding: 20px 0 24px;
 }
 
 .mmc-about-mv--vision {
-  padding-bottom: 56px;
+  padding-bottom: 28px;
   background: var(--mmc-wash-orange);
 }
 
 .mmc-about-mv-panel {
   display: grid;
   grid-template-columns: minmax(220px, 0.9fr) minmax(0, 1.1fr);
-  gap: 28px;
-  align-items: stretch;
-  padding: 20px;
+  gap: 24px;
+  align-items: start;
+  padding: 16px;
   background: #fff;
   border: 1px solid var(--mmc-border);
   box-shadow: var(--mmc-shadow);
@@ -374,15 +374,15 @@
 
 .mmc-about-mv-media {
   position: relative;
-  min-height: 280px;
   overflow: hidden;
   background: var(--mmc-blue-light);
+  aspect-ratio: 4 / 5;
+  max-height: 360px;
 }
 
 .mmc-about-mv-media img {
   width: 100%;
   height: 100%;
-  min-height: 280px;
   object-fit: cover;
   display: block;
 }
@@ -410,22 +410,28 @@
 .mmc-about-mv-copy {
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  padding: 12px 8px 12px 4px;
+  justify-content: flex-start;
+  align-self: start;
+  padding: 4px 4px 0;
+  gap: 0;
+}
+
+.mmc-about-mv-copy .mmc-section-eyebrow {
+  margin: 0 0 8px;
 }
 
 .mmc-about-mv-copy h2 {
-  margin: 0 0 12px;
+  margin: 0 0 10px;
   font-size: clamp(1.7rem, 3vw, 2.3rem);
   letter-spacing: -0.035em;
   color: var(--mmc-blue);
 }
 
 .mmc-about-mv-copy > p {
-  margin: 0 0 18px;
+  margin: 0 0 14px;
   max-width: 46ch;
   color: var(--mmc-muted);
-  line-height: 1.7;
+  line-height: 1.65;
 }
 
 .mmc-about-mv-points {
@@ -433,7 +439,7 @@
   padding: 0;
   list-style: none;
   display: grid;
-  gap: 10px;
+  gap: 8px;
 }
 
 .mmc-about-mv-points li {

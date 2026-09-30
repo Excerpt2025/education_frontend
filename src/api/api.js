@@ -48,6 +48,22 @@ const api = axios.create({
   headers: { 'Content-Type': 'application/json' },
 });
 
+api.interceptors.request.use((config) => {
+  // Let the browser set the multipart boundary itself for file uploads.
+  // Without this, the default JSON header makes axios serialize FormData
+  // to JSON and the files are lost.
+  if (typeof FormData !== 'undefined' && config.data instanceof FormData) {
+    if (config.headers?.delete) config.headers.delete('Content-Type');
+    else delete config.headers['Content-Type'];
+  }
+
+  const adminToken = localStorage.getItem('mmc_admin_token');
+  const studentToken = localStorage.getItem('mmc_student_token');
+  const token = config.url?.startsWith('/admin') ? adminToken : (studentToken || adminToken);
+  if (token) config.headers.Authorization = `Bearer ${token}`;
+  return config;
+});
+
 // Attach student/admin token automatically
 api.interceptors.request.use((config) => {
   const adminToken = localStorage.getItem('mmc_admin_token');
