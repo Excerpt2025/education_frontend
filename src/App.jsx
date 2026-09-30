@@ -53,7 +53,7 @@ import ManagePages from './admin/ManagePages/ManagePages.jsx';
 import Reports from './admin/Reports/Reports.jsx';
 import AdminSettings from './admin/AdminSettings/AdminSettings.jsx';
 import ManagePredictorLeads from './admin/ManagePredictorLeads/ManagePredictorLeads.jsx';
-import ManageKyc from './admin/Managekyc/ManageKyc.jsx';
+import ManageKyc from './admin/ManageKyc/ManageKyc.jsx';
 
 
 // Layout wrapper for all public-facing pages (Navbar + Footer)
