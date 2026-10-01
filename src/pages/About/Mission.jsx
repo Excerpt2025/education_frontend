@@ -7,7 +7,7 @@ export default function Mission() {
     <section className="mmc-about-mv mmc-about-mv--mission" aria-labelledby="mmc-mission-heading">
       <div className="container mmc-about-mv-panel">
         <MotionReveal variant="left" className="mmc-about-mv-media">
-          <img src="/images/vision.jpg" alt="" loading="lazy" />
+          <img src="/images/mission.jpg" alt="" loading="lazy" />
           <span className="mmc-about-mv-badge">Mission</span>
         </MotionReveal>
         <MotionReveal className="mmc-about-mv-copy">

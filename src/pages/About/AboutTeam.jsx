@@ -23,11 +23,12 @@ export default function AboutTeam() {
                 <OutlineIcon name="handshake" size={14} />
                 {member.detail}
               </span>
-              <div className={`mmc-about-person-photo mmc-about-person-photo--${member.tone}`}>
+              <div className={`mmc-about-person-mark mmc-about-person-mark--${member.tone}`}>
                 {member.initials}
               </div>
               <strong>{member.name}</strong>
               <span>{member.role}</span>
+              <p>{member.text}</p>
             </ScrollCard>
           ))}
         </div>

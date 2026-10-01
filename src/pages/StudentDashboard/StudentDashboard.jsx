@@ -261,7 +261,7 @@ export default function StudentDashboard() {
 
               <div className="mmc-dash-tool-grid">
                 {TOOLS.map((t) => (
-                  <div key={t.key} className={`mmc-dash-tool-card theme-${t.theme}`}>
+                  <Link key={t.key} to={t.to} className={`mmc-dash-tool-card theme-${t.theme}`}>
                     <div className="mmc-dash-tool-card-top">
                       <span className="mmc-dash-tool-icon"><OutlineIcon name={t.icon} size={22} /></span>
                       <span className={`mmc-dash-lock-badge ${access[t.key] ? 'is-unlocked' : 'is-locked'}`}>
@@ -273,11 +273,11 @@ export default function StudentDashboard() {
                     <p>{t.blurb}</p>
                     <div className="mmc-dash-tool-card-footer">
                       <span className="mmc-dash-tool-price">{access[t.key] ? 'Included' : t.price}</span>
-                      <Link to={t.to} className="mmc-dash-tool-btn">
-                        {access[t.key] ? 'Open' : 'Unlock'} <OutlineIcon name="arrow" size={13} />
-                      </Link>
+                      <span className="mmc-dash-tool-btn">
+                        {access[t.key] ? '' : 'Unlock'} <OutlineIcon name="arrow" size={13} />
+                      </span>
                     </div>
-                  </div>
+                  </Link>
                 ))}
               </div>
 

@@ -21,7 +21,7 @@ export default function Vision() {
           </ul>
         </MotionReveal>
         <MotionReveal variant="right" className="mmc-about-mv-media">
-          <img src="/images/mission.jpg" alt="" loading="lazy" />
+          <img src="/images/vision.jpg" alt="" loading="lazy" />
           <span className="mmc-about-mv-badge mmc-about-mv-badge--orange">Vision</span>
         </MotionReveal>
       </div>

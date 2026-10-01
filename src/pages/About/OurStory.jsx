@@ -1,9 +1,8 @@
 import React from 'react';
-import MotionReveal, { staggerDelay } from '../../motion/MotionReveal.jsx';
+import MotionReveal from '../../motion/MotionReveal.jsx';
 import ScrollCard from '../../motion/ScrollCard.jsx';
-import ParallaxElement from '../../motion/ParallaxElement.jsx';
 import AnimatedText from '../../motion/AnimatedText.jsx';
-import { STORY_PHASES } from './aboutContent.js';
+import { STORY_PHASES, STORY_POINTS } from './aboutContent.js';
 
 export default function OurStory() {
   return (
@@ -17,6 +16,9 @@ export default function OurStory() {
             </h2>
             <p>
               Students need direction, not guesswork. We stay with them from stream choice after 10th through college admission and placement prep.
+            </p>
+            <p>
+              The work is one-on-one: career counselling, aptitude and psychometric assessment, stream and course selection, and college shortlisting. Each step uses the last one, so a student is not starting over at every form.
             </p>
           </MotionReveal>
 
@@ -34,15 +36,14 @@ export default function OurStory() {
           </ol>
         </div>
 
-        <MotionReveal variant="right" delay={staggerDelay(2)} className="mmc-about-story-visual">
-          <ParallaxElement speed={0.06}>
-            <img
-              src="/images/hero-journey.png"
-              alt=""
-              loading="lazy"
-            />
-          </ParallaxElement>
-        </MotionReveal>
+        <div className="mmc-about-story-notes">
+          {STORY_POINTS.map((item, i) => (
+            <ScrollCard key={item.title} index={i} className="mmc-about-story-note">
+              <strong>{item.title}</strong>
+              <p>{item.text}</p>
+            </ScrollCard>
+          ))}
+        </div>
       </div>
     </section>
   );
