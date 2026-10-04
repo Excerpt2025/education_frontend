@@ -76,6 +76,7 @@ export default function Navbar() {
             <NavLink to="/about" onClick={close}>About</NavLink>
             <NavLink to="/services" onClick={close}>Services</NavLink>
             <NavLink to="/blog" onClick={close}>Blog</NavLink>
+            <NavLink to="/institute" onClick={close}>Institute</NavLink>
             <NavLink to="/contact" onClick={close}>Contact</NavLink>
             <Link
               to={student ? '/dashboard' : '/register'}

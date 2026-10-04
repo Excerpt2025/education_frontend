@@ -30,6 +30,7 @@ import StudentDashboard from './pages/StudentDashboard/StudentDashboard.jsx';
 import Colleges from './pages/Colleges/Colleges.jsx';
 import CollegeDetail from './pages/CollegeDetail/CollegeDetail.jsx';
 import CollegeAdmissionEnquiry from './pages/CollegeAdmissionEnquiry/CollegeAdmissionEnquiry.jsx';
+import Institute from './pages/Institute/Institute.jsx';
 import NotFound from './pages/NotFound/NotFound.jsx';
 
 // Admin pages
@@ -95,6 +96,7 @@ export default function App() {
             <Route path="/colleges" element={<PublicLayout><Colleges /></PublicLayout>} />
             <Route path="/colleges/:id" element={<PublicLayout><CollegeDetail /></PublicLayout>} />
             <Route path="/college-admission-enquiry" element={<PublicLayout><CollegeAdmissionEnquiry /></PublicLayout>} />
+            <Route path="/institute" element={<PublicLayout><Institute /></PublicLayout>} />
             <Route
               path="/dashboard"
               element={<PublicLayout><ProtectedRoute><StudentDashboard /></ProtectedRoute></PublicLayout>}

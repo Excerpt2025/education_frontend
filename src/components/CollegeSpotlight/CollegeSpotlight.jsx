@@ -66,16 +66,7 @@ export default function CollegeSpotlight() {
   return (
     <section className="mmc-spot-section">
       <div className="container">
-        <div className="mmc-spot-head">
-          <div>
-            <span className="mmc-spot-eyebrow">Colleges for you</span>
-            <h2>Explore, filter &amp; <span className="mmc-spot-grad">compare</span> colleges</h2>
-            <p>Fees, placements, hostel options and accreditation - laid out side by side so you can decide with confidence.</p>
-          </div>
-          <Link to="/colleges" className="btn btn-primary mmc-spot-cta">
-            Explore All Colleges <OutlineIcon name="arrow" size={16} />
-          </Link>
-        </div>
+        
 
         {/* ---------- Choose your area of interest ---------- */}
         <h3 className="mmc-spot-subhead">Choose your <span>area of interest</span></h3>
@@ -158,6 +149,17 @@ export default function CollegeSpotlight() {
         <div className="mmc-spot-footer">
           <Link to="/colleges" className="mmc-spot-link">
             See full list, filter by course &amp; compare up to 4 colleges <OutlineIcon name="arrow" size={14} />
+          </Link>
+        </div>
+
+        <div className="mmc-spot-head">
+          <div>
+            <span className="mmc-spot-eyebrow">Colleges for you</span>
+            <h2>Explore, filter &amp; <span className="mmc-spot-grad">compare</span> colleges</h2>
+            <p>Fees, placements, hostel options and accreditation - laid out side by side so you can decide with confidence.</p>
+          </div>
+          <Link to="/colleges" className="btn btn-primary mmc-spot-cta">
+            Explore All Colleges <OutlineIcon name="arrow" size={16} />
           </Link>
         </div>
       </div>
