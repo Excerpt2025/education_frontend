@@ -66,7 +66,9 @@ export default function CollegeSpotlight() {
   return (
     <section className="mmc-spot-section">
       <div className="container">
-        
+        <div>
+        <span className="mmc-spot-eyebrow">Colleges for you</span>
+        </div>
 
         {/* ---------- Choose your area of interest ---------- */}
         <h3 className="mmc-spot-subhead">Choose your <span>area of interest</span></h3>
@@ -154,7 +156,6 @@ export default function CollegeSpotlight() {
 
         <div className="mmc-spot-head">
           <div>
-            <span className="mmc-spot-eyebrow">Colleges for you</span>
             <h2>Explore, filter &amp; <span className="mmc-spot-grad">compare</span> colleges</h2>
             <p>Fees, placements, hostel options and accreditation - laid out side by side so you can decide with confidence.</p>
           </div>
