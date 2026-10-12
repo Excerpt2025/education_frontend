@@ -363,3 +363,7 @@ body.mmc-has-sticky-college-bar .mmc-whatsapp-float {
     bottom: 84px !important;
   }
 }
+
+
+.mmc-cd-hero-btn { padding: 0; border: 0; cursor: pointer; }
+.mmc-cd-hero-btn svg { display: block; stroke: currentColor; }

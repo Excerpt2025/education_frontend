@@ -1,7 +1,8 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import api, { getImageUrl } from '../../api/api.js';
 import OutlineIcon from '../icons/OutlineIcon.jsx';
+import CollegeInterestModal from '../CollegeInterestModal/CollegeInterestModal.jsx';
 import { MOCK_COLLEGES } from '../../data/collegeMocks.js';
 import { COURSE_CATEGORIES, categoryCounts, courseLabels } from '../../data/courseCategories.js';
 import './CollegeSpotlight.css';
@@ -9,6 +10,8 @@ import './CollegeSpotlight.css';
 /* Home-page college section:
  *   1. "Choose your area of interest" cards -> /colleges?category=<id>
  *   2. A horizontal slider of TOP colleges only (featured first, then by ranking)
+ *   3. Clicking a college first asks for the interest form (same as the
+ *      Colleges page), then opens the college details.
  */
 
 const PLACEHOLDER = '/images/college-placeholder.jpg';
@@ -23,11 +26,33 @@ function pickTopColleges(list) {
     .slice(0, TOP_LIMIT);
 }
 
+/* Inline SVG arrows - always visible (the "arrow-left" icon name was missing
+ * from OutlineIcon, which is why the back button looked empty). */
+function ChevronLeft() {
+  return (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <path d="M15 18l-6-6 6-6" />
+    </svg>
+  );
+}
+function ChevronRight() {
+  return (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <path d="M9 18l6-6-6-6" />
+    </svg>
+  );
+}
+
 export default function CollegeSpotlight() {
+  const navigate = useNavigate();
+
   // All colleges are kept so category counts are real; only the top ones are shown in the slider.
   const [all, setAll] = useState(MOCK_COLLEGES);
   const trackRef = useRef(null);
   const [edge, setEdge] = useState({ start: true, end: false });
+  const [pendingCollege, setPendingCollege] = useState(null);
 
   useEffect(() => {
     let alive = true;
@@ -63,11 +88,26 @@ export default function CollegeSpotlight() {
     el.scrollBy({ left: dir * step, behavior: 'smooth' });
   };
 
+  /* ---------- interest form gate (same behaviour as Colleges page) ---------- */
+  const alreadyUnlocked = () => sessionStorage.getItem('mmc_interest_submitted');
+
+  const openCollege = (college) => {
+    if (alreadyUnlocked()) navigate(`/colleges/${college._id}`);
+    else setPendingCollege(college);
+  };
+
+  const onInterestSubmitted = () => {
+    sessionStorage.setItem('mmc_interest_submitted', '1');
+    const college = pendingCollege;
+    setPendingCollege(null);
+    if (college) navigate(`/colleges/${college._id}`);
+  };
+
   return (
     <section className="mmc-spot-section">
       <div className="container">
         <div>
-        <span className="mmc-spot-eyebrow">Colleges for you</span>
+          <span className="mmc-spot-eyebrow">Colleges for you</span>
         </div>
 
         {/* ---------- Choose your area of interest ---------- */}
@@ -94,10 +134,10 @@ export default function CollegeSpotlight() {
           <h3 className="mmc-spot-subhead">Top <span>colleges</span></h3>
           <div className="mmc-spot-arrows">
             <button type="button" onClick={() => scrollByCards(-1)} disabled={edge.start} aria-label="Previous colleges">
-              <OutlineIcon name="arrow-left" size={16} />
+              <ChevronLeft />
             </button>
             <button type="button" onClick={() => scrollByCards(1)} disabled={edge.end} aria-label="Next colleges">
-              <OutlineIcon name="arrow" size={16} />
+              <ChevronRight />
             </button>
           </div>
         </div>
@@ -106,7 +146,12 @@ export default function CollegeSpotlight() {
           {top.map((c) => {
             const courses = courseLabels(c);
             return (
-              <Link to={`/colleges/${c._id}`} key={c._id} className="mmc-spot-card">
+              <button
+                type="button"
+                key={c._id}
+                className="mmc-spot-card"
+                onClick={() => openCollege(c)}
+              >
                 <div className="mmc-spot-photo">
                   <img
                     src={getImageUrl(c.image) || getImageUrl(c.logo) || PLACEHOLDER}
@@ -143,7 +188,7 @@ export default function CollegeSpotlight() {
                     {c.rating ? ` · ★ ${c.rating}` : ''}
                   </span>
                 </div>
-              </Link>
+              </button>
             );
           })}
         </div>
@@ -164,6 +209,19 @@ export default function CollegeSpotlight() {
           </Link>
         </div>
       </div>
+
+      {pendingCollege && (
+        <CollegeInterestModal
+          collegeIds={[pendingCollege._id]}
+          context="view"
+          courseOptions={courseLabels(pendingCollege)}
+          title="Tell us a bit about you 👋"
+          subtitle={`Just a few details before we open the full profile for ${pendingCollege.name}.`}
+          submitLabel="View College Details →"
+          onSuccess={onInterestSubmitted}
+          onClose={() => setPendingCollege(null)}
+        />
+      )}
     </section>
   );
 }

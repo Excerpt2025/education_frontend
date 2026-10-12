@@ -19,13 +19,12 @@
 }
 @keyframes mmc-report-in { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: none; } }
 .mmc-report-wrap.is-compact .mmc-report-card { padding: 22px; border-radius: 16px; }
-
-.mmc-report-blob { position: absolute; border-radius: 50%; pointer-events: none; }
+.mmc-report-blob { position: absolute; z-index: 0; border-radius: 50%; pointer-events: none; }
 .mmc-report-blob-a { top: -100px; right: -80px; width: 260px; height: 260px; background: radial-gradient(circle, var(--mmc-orange-glow) 0%, transparent 70%); }
 .mmc-report-blob-b { bottom: -120px; left: -60px; width: 240px; height: 240px; background: radial-gradient(circle, var(--mmc-blue-glow) 0%, transparent 70%); }
 
 /* ---- shared ---- */
-.mmc-report-card > * { position: relative; z-index: 1; }
+.mmc-report-card > *:not(.mmc-report-blob) { position: relative; z-index: 1; }
 .mmc-report-card button { font: inherit; color: inherit; }
 
 /* ---- top bar ---- */

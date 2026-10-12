@@ -1,9 +1,36 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { BASE_URL } from '../../api/api.js';
+import api from '../../api/api.js';           // BASE_URL import no longer needed
 import OutlineIcon from '../../components/icons/OutlineIcon.jsx';
 
 const MAX_MB = 5;
+const MAX_DIM = 1800;
 const ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'application/pdf'];
+
+// Shrinks big phone photos so they fit under the 5 MB server limit.
+function compressImage(file) {
+  return new Promise((resolve) => {
+    if (!file.type.startsWith('image/') || file.size <= 1.5 * 1024 * 1024) return resolve(file);
+    const img = new Image();
+    const url = URL.createObjectURL(file);
+    img.onload = () => {
+      const scale = Math.min(1, MAX_DIM / Math.max(img.width, img.height));
+      const canvas = document.createElement('canvas');
+      canvas.width = Math.round(img.width * scale);
+      canvas.height = Math.round(img.height * scale);
+      const ctx = canvas.getContext('2d');
+      ctx.fillStyle = '#fff';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+      canvas.toBlob((blob) => {
+        URL.revokeObjectURL(url);
+        if (!blob || blob.size >= file.size) return resolve(file);
+        resolve(new File([blob], file.name.replace(/\.\w+$/, '') + '.jpg', { type: 'image/jpeg' }));
+      }, 'image/jpeg', 0.85);
+    };
+    img.onerror = () => { URL.revokeObjectURL(url); resolve(file); };
+    img.src = url;
+  });
+}
 
 const DOCS = [
   { key: 'passbook', title: 'Bank passbook', hint: 'Front page showing your name, account number and IFSC. A cancelled cheque also works.' },
@@ -27,6 +54,10 @@ export default function KycSection({ kyc = {}, meta, onSubmitted }) {
   const [saving, setSaving] = useState(false);
   const [msg, setMsg] = useState({ type: '', text: '' });
   const filesRef = useRef(files);
+  const msgRef = useRef(null);
+useEffect(() => {
+  if (msg.text) msgRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+}, [msg]);
   filesRef.current = files;
 
   // Free any preview URLs when the tab is left.
@@ -36,24 +67,25 @@ export default function KycSection({ kyc = {}, meta, onSubmitted }) {
 
   const uploaded = kyc.documents || {};
 
-  const pickFile = (key, e) => {
-    const file = e.target.files?.[0];
-    e.target.value = '';
-    if (!file) return;
-    if (!ALLOWED_TYPES.includes(file.type)) {
-      setMsg({ type: 'error', text: 'Please upload a JPG, PNG, WEBP or PDF file.' });
-      return;
-    }
-    if (file.size > MAX_MB * 1024 * 1024) {
-      setMsg({ type: 'error', text: `Each file must be ${MAX_MB} MB or smaller.` });
-      return;
-    }
-    setMsg({ type: '', text: '' });
-    setFiles((prev) => {
-      if (prev[key]?.url) URL.revokeObjectURL(prev[key].url);
-      return { ...prev, [key]: { file, url: file.type.startsWith('image/') ? URL.createObjectURL(file) : '' } };
-    });
-  };
+ const pickFile = async (key, e) => {
+  const original = e.target.files?.[0];
+  e.target.value = '';
+  if (!original) return;
+  if (!ALLOWED_TYPES.includes(original.type)) {
+    setMsg({ type: 'error', text: 'Please upload a JPG, PNG, WEBP or PDF file (iPhone HEIC photos are not supported).' });
+    return;
+  }
+  const file = await compressImage(original);
+  if (file.size > MAX_MB * 1024 * 1024) {
+    setMsg({ type: 'error', text: `Each file must be ${MAX_MB} MB or smaller.` });
+    return;
+  }
+  setMsg({ type: '', text: '' });
+  setFiles((prev) => {
+    if (prev[key]?.url) URL.revokeObjectURL(prev[key].url);
+    return { ...prev, [key]: { file, url: file.type.startsWith('image/') ? URL.createObjectURL(file) : '' } };
+  });
+};
 
   const clearFile = (key) => {
     setFiles((prev) => {
@@ -104,28 +136,22 @@ export default function KycSection({ kyc = {}, meta, onSubmitted }) {
       // Native fetch on purpose: the browser builds the multipart body and its
       // boundary itself, so nothing (default headers, interceptors) can corrupt
       // the upload. Only the auth header is added.
-      const token = localStorage.getItem('mmc_student_token');
-      const response = await fetch(`${BASE_URL}/students/kyc`, {
-        method: 'PUT',
-        headers: token ? { Authorization: `Bearer ${token}` } : {},
-        body: fd,
-      });
-
-      let data = {};
-      try { data = await response.json(); } catch { /* non-JSON response */ }
-
-      if (!response.ok || !data.success) {
-        const detail = Array.isArray(data.errors) && data.errors.length ? data.errors.join('. ') : data.message;
-        throw new Error(detail || `Server error (${response.status})`);
-      }
+     const response = await api.put('/students/kyc', fd, {
+  headers: { 'Content-Type': 'multipart/form-data' },
+  timeout: 120000,
+});
+const data = response.data;
+if (!data.success) throw new Error(data.message || 'Could not submit KYC.');
 
       Object.values(files).forEach((f) => f?.url && URL.revokeObjectURL(f.url));
       setFiles(EMPTY_FILES);
       onSubmitted?.(data.student);
       setMsg({ type: 'success', text: "KYC submitted! We'll verify it within 24-48 hours before your first payout." });
-    } catch (err) {
-      setMsg({ type: 'error', text: err.message || 'Could not submit KYC. Please check the details and try again.' });
-    } finally {
+   } catch (err) {
+  const d = err.response?.data;
+  const detail = Array.isArray(d?.errors) && d.errors.length ? d.errors.join('. ') : d?.message;
+  setMsg({ type: 'error', text: detail || err.message || 'Could not submit KYC. Please check the details and try again.' });
+} finally {
       setSaving(false);
     }
   };

@@ -101,6 +101,16 @@ function resolveApplyUrl(college) {
   return /^https?:\/\//i.test(raw) ? raw : `https://${raw}`;
 }
 
+function BackArrow() {
+  return (
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <path d="M15 18l-6-6 6-6" />
+    </svg>
+  );
+}
+
+
 export default function CollegeDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -200,9 +210,14 @@ export default function CollegeDetail() {
         <img src={gallery[galleryIndex]} alt={college.name} className="mmc-cd-hero-img" />
         <div className="mmc-cd-hero-scrim" />
 
-        <button type="button" className="mmc-cd-hero-btn mmc-cd-hero-back" onClick={() => navigate(-1)} aria-label="Go back">
-          <OutlineIcon name="arrow-left" size={18} />
-        </button>
+       <button
+  type="button"
+  className="mmc-cd-hero-btn mmc-cd-hero-back"
+  onClick={() => (window.history.length > 1 ? navigate(-1) : navigate('/colleges'))}
+  aria-label="Go back"
+>
+  <BackArrow />
+</button>
         <div className="mmc-cd-hero-actions">
           <button type="button" className="mmc-cd-hero-btn" onClick={share} aria-label="Share this college">
             <OutlineIcon name="share" size={18} />

@@ -31,9 +31,10 @@
 .mmc-spot-slider-head { display: flex; justify-content: space-between; align-items: center; }
 .mmc-spot-arrows { display: flex; gap: 8px; margin-bottom: 16px; }
 .mmc-spot-arrows button {
-  width: 38px; height: 38px; border-radius: 50%; border: 1px solid #cfe0f0; background: #fff; color: #0174cc;
+  width: 38px; height: 38px; padding: 0; border-radius: 50%; border: 1px solid #0174cc; background: #fff; color: #0174cc;
   display: grid; place-items: center; cursor: pointer; transition: background .15s, color .15s, opacity .15s;
 }
+.mmc-spot-arrows button svg { display: block; stroke: currentColor; }
 .mmc-spot-arrows button:hover:not(:disabled) { background: #0174cc; color: #fff; }
 .mmc-spot-arrows button:disabled { opacity: .35; cursor: default; }
 
@@ -44,13 +45,16 @@
 }
 .mmc-spot-track::-webkit-scrollbar { display: none; }
 
+/* Card is now a <button> (opens the interest form first) - reset button styles */
 .mmc-spot-card {
   flex: 0 0 300px; scroll-snap-align: start; display: flex; flex-direction: column;
   background: #fff; border-radius: 16px; border: 1px solid #dbe7f3; overflow: hidden;
   text-decoration: none; color: inherit; box-shadow: 0 4px 14px rgba(15, 42, 74, .06);
   transition: transform .18s ease, box-shadow .18s ease;
+  padding: 0; margin: 0; text-align: left; font: inherit; cursor: pointer; align-items: stretch;
 }
 .mmc-spot-card:hover { transform: translateY(-4px); box-shadow: 0 14px 30px rgba(15, 42, 74, .14); }
+.mmc-spot-card:focus-visible { outline: 2px solid #0174cc; outline-offset: 2px; }
 
 .mmc-spot-photo { position: relative; height: 160px; background: #eaf2fa; overflow: hidden; }
 .mmc-spot-photo img { width: 100%; height: 100%; object-fit: cover; display: block; }

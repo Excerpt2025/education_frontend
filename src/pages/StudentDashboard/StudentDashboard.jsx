@@ -70,6 +70,18 @@ export default function StudentDashboard() {
     api.get('/referrals/my').then((res) => setReferral(res.data)).catch(() => {});
   }, []);
 
+  useEffect(() => {
+  if (!viewingReport) return undefined;
+  const onKey = (e) => { if (e.key === 'Escape') setViewingReport(null); };
+  const prev = document.body.style.overflow;
+  document.body.style.overflow = 'hidden';
+  window.addEventListener('keydown', onKey);
+  return () => {
+    document.body.style.overflow = prev;
+    window.removeEventListener('keydown', onKey);
+  };
+}, [viewingReport]);
+
   const saveProfile = async (e) => {
     e.preventDefault();
     setSaving(true); setSavedMsg('');
@@ -450,14 +462,19 @@ export default function StudentDashboard() {
         </div>
       </section>
 
-      {viewingReport && (
-        <div className="mmc-dash-report-modal-backdrop" onClick={() => setViewingReport(null)}>
-          <div className="mmc-dash-report-modal" onClick={(e) => e.stopPropagation()}>
-            <button type="button" className="mmc-dash-report-modal-close" onClick={() => setViewingReport(null)} aria-label="Close">×</button>
-            <CareerReportCard report={viewingReport} studentName={student?.fullName} />
-          </div>
-        </div>
-      )}
+     {viewingReport && (
+  <div className="mmc-dash-report-modal-backdrop" onClick={() => setViewingReport(null)}>
+    <div className="mmc-dash-report-modal" onClick={(e) => e.stopPropagation()}>
+      <div className="mmc-dash-report-modal-bar">
+        <strong>{viewingReport.result?.archetype || 'Career Assessment Report'}</strong>
+        <button type="button" className="mmc-dash-report-modal-close" onClick={() => setViewingReport(null)} aria-label="Close">×</button>
+      </div>
+      <div className="mmc-dash-report-modal-body">
+        <CareerReportCard report={viewingReport} studentName={student?.fullName} />
+      </div>
+    </div>
+  </div>
+)}
     </div>
   );
 }

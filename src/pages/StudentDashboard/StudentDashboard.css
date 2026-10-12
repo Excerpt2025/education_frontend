@@ -390,22 +390,38 @@
 .mmc-dash-report-view { display: inline-flex; align-items: center; gap: 4px; font-size: 0.78rem; font-weight: 700; color: var(--mmc-blue-dark); white-space: nowrap; }
 
 .mmc-dash-report-modal-backdrop {
-  position: fixed; inset: 0; z-index: 300;
+  position: fixed; inset: 0; z-index: 2000;
   background: rgba(15, 23, 42, 0.6);
-  display: flex; align-items: flex-start; justify-content: center;
-  padding: 30px 16px; overflow-y: auto;
+  display: flex; align-items: center; justify-content: center;
+  padding: 16px;
 }
 .mmc-dash-report-modal {
   position: relative;
-  width: 100%; max-width: 760px;
-  margin: auto;
+  width: 100%; max-width: 820px;
+  max-height: calc(100vh - 32px);
+  display: flex; flex-direction: column;
+  background: #fff; border-radius: 18px; overflow: hidden;
+  transform: translateZ(0); /* fixed/sticky children inside the report now stay inside the modal */
 }
+.mmc-dash-report-modal-bar {
+  flex-shrink: 0;
+  display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  padding: 12px 18px; border-bottom: 1px solid var(--mmc-border); background: #fff;
+}
+.mmc-dash-report-modal-bar strong { font-size: 0.95rem; color: var(--mmc-dark); }
 .mmc-dash-report-modal-close {
-  position: absolute; top: -14px; right: -14px; z-index: 2;
   width: 34px; height: 34px; border-radius: 50%;
-  background: #fff; border: 1px solid var(--mmc-border);
-  font-size: 1.1rem; line-height: 1; cursor: pointer;
-  box-shadow: var(--mmc-shadow);
+  background: var(--mmc-surface); border: 1px solid var(--mmc-border);
+  font-size: 1.2rem; line-height: 1; cursor: pointer;
+}
+.mmc-dash-report-modal-body {
+  flex: 1; min-height: 0; overflow-y: auto; -webkit-overflow-scrolling: touch;
+}
+/* Keep "Download PDF Report" visible while the report scrolls */
+.mmc-dash-report-modal-body .mmc-report-actions {
+  position: sticky; top: 0; z-index: 5;
+  margin: 0; padding: 10px 16px;
+  background: #fff; border-bottom: 1px solid var(--mmc-border);
 }
 
 /* ---------- MY COLLEGES ---------- */
@@ -437,32 +453,7 @@
 .mmc-dash-college-body strong { font-size: 0.82rem; color: var(--mmc-dark); line-height: 1.3; }
 .mmc-dash-college-body small { display: flex; align-items: center; gap: 4px; font-size: 0.7rem; color: var(--mmc-muted); }
 
-/* ---------- RESPONSIVE ---------- */
-@media (max-width: 980px) {
-  .mmc-dash-grid { grid-template-columns: repeat(2, 1fr); }
-  .mmc-dash-grid--3 { grid-template-columns: repeat(2, 1fr); }
-  .mmc-dash-two-col { grid-template-columns: 1fr; }
-  .mmc-dash-tool-grid { grid-template-columns: repeat(2, 1fr); }
-  .mmc-dash-college-grid { grid-template-columns: repeat(2, 1fr); }
-}
-@media (max-width: 640px) {
-  .mmc-dash-hero-inner { flex-direction: column; text-align: center; }
-  .mmc-dash-grid { grid-template-columns: 1fr; gap: 14px; }
-  .mmc-dash-grid--3 { grid-template-columns: 1fr; }
-  .mmc-dash-tabs { flex-wrap: nowrap; overflow-x: auto; -webkit-overflow-scrolling: touch; margin-bottom: 20px; }
-  .mmc-dash-tabs button { padding: 10px 12px; white-space: nowrap; }
-  .mmc-dash-stat { padding: 18px; }
-  .mmc-dash-form, .mmc-dash-table { padding: 18px; }
-  .mmc-referral-link { flex-direction: column; }
-  .mmc-dash-tool-grid { grid-template-columns: 1fr; }
-  .mmc-dash-college-grid { grid-template-columns: 1fr 1fr; }
-  .mmc-dash-banner { flex-direction: column; align-items: flex-start; }
-}
-
-
-/* ============================================================
-   APPEND to the bottom of StudentDashboard.css
-   ============================================================ */
+/* ---------- KYC EXTRAS ---------- */
 .mmc-dash-kyc-verified-note {
   display: flex; align-items: center; gap: 6px;
   background: var(--mmc-success-bg); color: var(--mmc-success);
@@ -501,6 +492,7 @@
 
 .mmc-dash-kyc-doc-actions { display: flex; align-items: center; gap: 10px; }
 .mmc-dash-kyc-doc-btn {
+  position: relative; overflow: hidden; /* keeps the hidden file input inside the button */
   display: inline-flex; align-items: center; cursor: pointer;
   padding: 8px 14px; border-radius: 50px; font-size: 0.78rem; font-weight: 700;
   background: var(--mmc-dark); color: #fff;
@@ -509,6 +501,29 @@
 .mmc-dash-kyc-doc-btn:focus-within { outline: 2px solid var(--mmc-orange); outline-offset: 2px; }
 .mmc-dash-kyc-doc-remove { border: 0; background: none; color: var(--mmc-danger); font-size: 0.78rem; font-weight: 700; cursor: pointer; }
 
+/* ---------- RESPONSIVE ---------- */
+@media (max-width: 980px) {
+  .mmc-dash-grid { grid-template-columns: repeat(2, 1fr); }
+  .mmc-dash-grid--3 { grid-template-columns: repeat(2, 1fr); }
+  .mmc-dash-two-col { grid-template-columns: 1fr; }
+  .mmc-dash-tool-grid { grid-template-columns: repeat(2, 1fr); }
+  .mmc-dash-college-grid { grid-template-columns: repeat(2, 1fr); }
+}
 @media (max-width: 860px) {
   .mmc-dash-kyc-docs { grid-template-columns: 1fr; }
+}
+@media (max-width: 640px) {
+  .mmc-dash-hero-inner { flex-direction: column; text-align: center; }
+  .mmc-dash-grid { grid-template-columns: 1fr; gap: 14px; }
+  .mmc-dash-grid--3 { grid-template-columns: 1fr; }
+  .mmc-dash-tabs { flex-wrap: nowrap; overflow-x: auto; -webkit-overflow-scrolling: touch; margin-bottom: 20px; }
+  .mmc-dash-tabs button { padding: 10px 12px; white-space: nowrap; }
+  .mmc-dash-stat { padding: 18px; }
+  .mmc-dash-form, .mmc-dash-table { padding: 18px; }
+  .mmc-referral-link { flex-direction: column; }
+  .mmc-dash-tool-grid { grid-template-columns: 1fr; }
+  .mmc-dash-college-grid { grid-template-columns: 1fr 1fr; }
+  .mmc-dash-banner { flex-direction: column; align-items: flex-start; }
+  .mmc-dash-report-modal-backdrop { padding: 0; }
+  .mmc-dash-report-modal { max-height: 100vh; height: 100%; border-radius: 0; }
 }
